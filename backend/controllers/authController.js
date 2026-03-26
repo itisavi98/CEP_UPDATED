@@ -6,7 +6,7 @@
 
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import User from '../models/user.js';
+import User from '../models/User.js';
 import { createClient } from '@supabase/supabase-js';
 
 // Create Supabase admin client only if credentials are available
