@@ -1,0 +1,478 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+.role-selection-page {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Animated background circles */
+.role-selection-page::before,
+.role-selection-page::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(59, 130, 246, 0.1);
+  animation: float 15s infinite ease-in-out;
+}
+
+.role-selection-page::before {
+  width: 400px;
+  height: 400px;
+  top: -100px;
+  left: -100px;
+  animation-delay: 0s;
+}
+
+.role-selection-page::after {
+  width: 300px;
+  height: 300px;
+  bottom: -80px;
+  right: -80px;
+  animation-delay: 2s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-30px) scale(1.1);
+  }
+}
+
+.role-selection-container {
+  max-width: 1000px;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+/* Header */
+.role-header {
+  text-align: center;
+  margin-bottom: 60px;
+  animation: fadeInDown 0.8s ease;
+}
+
+.role-header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 12px;
+  text-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.role-header p {
+  font-size: 16px;
+  color: #cbd5e1;
+  font-weight: 300;
+}
+
+/* Role Cards Container */
+.role-cards {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+
+/* Individual Role Card */
+.role-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 50px 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid rgba(59, 130, 246, 0.2);
+  position: relative;
+  overflow: hidden;
+  animation: fadeInUp 0.8s ease;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: 400px;
+  height: 400px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  min-width: 400px;
+  max-width: 400px;
+  min-height: 400px;
+  max-height: 400px;
+}
+
+.role-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(99, 102, 241, 0.1));
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.role-card:hover::before {
+  opacity: 1;
+}
+
+.role-card:hover {
+  transform: translateY(-12px) scale(1.02);
+  box-shadow: 0 20px 60px rgba(59, 130, 246, 0.3);
+  border-color: rgba(59, 130, 246, 0.5);
+}
+
+/* Client Card Specific */
+.client-card {
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.client-card:hover {
+  box-shadow: 0 20px 60px rgba(59, 130, 246, 0.3);
+  border-color: rgba(59, 130, 246, 0.5);
+  transform: translateY(-12px) scale(1.02);
+}
+
+.client-card::before {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(99, 102, 241, 0.05));
+}
+
+/* Admin Card Specific */
+.admin-card {
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+.admin-card:hover {
+  box-shadow: 0 20px 60px rgba(59, 130, 246, 0.3);
+  border-color: rgba(59, 130, 246, 0.5);
+  transform: translateY(-12px) scale(1.02);
+}
+
+.admin-card::before {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1));
+}
+
+/* Role Icon */
+.role-icon {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(59, 130, 246, 0.15);
+  border-radius: 50%;
+  transition: all 0.4s ease;
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+.role-icon svg {
+  width: 50px;
+  height: 50px;
+  color: #1e40af;
+  transition: transform 0.4s ease;
+}
+
+.role-card:hover .role-icon {
+  transform: scale(1.1) rotate(5deg);
+  background: rgba(59, 130, 246, 0.25);
+}
+
+.role-card:hover .role-icon svg {
+  transform: scale(1.15);
+}
+
+/* Client Icon Color */
+.client-card .role-icon {
+  background: rgba(34, 197, 94, 0.15);
+}
+
+.client-card .role-icon svg {
+  color: #15803d;
+}
+
+.client-card:hover .role-icon {
+  background: rgba(59, 130, 246, 0.25);
+}
+
+/* Admin Icon Color */
+.admin-card .role-icon {
+  background: rgba(59, 130, 246, 0.15);
+}
+
+.admin-card .role-icon svg {
+  color: #1e40af;
+}
+
+.admin-card:hover .role-icon {
+  background: rgba(59, 130, 246, 0.25);
+}
+
+/* Card Title */
+.role-card h2 {
+  font-size: 28px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
+  transition: color 0.3s ease;
+}
+
+.client-card h2 {
+  color: #15803d;
+}
+
+.client-card:hover h2 {
+  color: #1d4ed8;
+}
+
+.admin-card h2 {
+  color: #1e40af;
+}
+
+.admin-card:hover h2 {
+  color: #1d4ed8;
+}
+
+/* Card Description */
+.role-card p {
+  font-size: 15px;
+  color: #64748b;
+  font-weight: 400;
+  margin-bottom: 30px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Arrow */
+.role-arrow {
+  font-size: 32px;
+  color: #64748b;
+  font-weight: 300;
+  opacity: 0.8;
+  transition: all 0.4s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.role-card:hover .role-arrow {
+  opacity: 1;
+  transform: translateX(10px);
+}
+
+.client-card .role-arrow {
+  color: #15803d;
+}
+
+.client-card:hover .role-arrow {
+  color: #1d4ed8;
+}
+
+.admin-card .role-arrow {
+  color: #1e40af;
+}
+
+.admin-card:hover .role-arrow {
+  color: #1d4ed8;
+}
+
+/* Lock Badge for Admin */
+.lock-badge {
+  position: static;
+  background: rgba(59, 130, 246, 0.15);
+  color: #1e40af;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  z-index: 1;
+  animation: pulse-badge 2s infinite;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+/* Placeholder for Client Card to match height */
+.card-badge-placeholder {
+  height: 32px;
+  visibility: hidden;
+  margin-top: 10px;
+}
+
+@keyframes pulse-badge {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* Card Content Wrapper */
+.role-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Footer */
+.role-footer {
+  text-align: center;
+  animation: fadeIn 1s ease 0.3s both;
+}
+
+.role-footer p {
+  font-size: 14px;
+  color: #94a3b8;
+  font-weight: 300;
+}
+
+/* Animations */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Add stagger effect for cards */
+.role-cards .role-card:first-child {
+  animation-delay: 0.1s;
+}
+
+.role-cards .role-card:last-child {
+  animation-delay: 0.2s;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .role-header h1 {
+    font-size: 32px;
+  }
+
+  .role-header p {
+    font-size: 16px;
+  }
+
+  .role-cards {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+
+  .role-card {
+    padding: 40px 30px;
+  }
+
+  .role-card h2 {
+    font-size: 24px;
+  }
+
+  .role-icon {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 20px;
+  }
+
+  .role-icon svg {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .role-selection-page {
+    padding: 15px;
+  }
+
+  .role-header {
+    margin-bottom: 40px;
+  }
+
+  .role-header h1 {
+    font-size: 28px;
+  }
+
+  .role-header p {
+    font-size: 14px;
+  }
+
+  .role-card {
+    padding: 35px 25px;
+  }
+
+  .role-card h2 {
+    font-size: 22px;
+  }
+
+  .role-card p {
+    font-size: 14px;
+  }
+
+  .lock-badge {
+    font-size: 10px;
+    padding: 5px 10px;
+  }
+}
+
+/* Add subtle pulse animation to cards */
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 15px rgba(59, 130, 246, 0);
+  }
+}
+
+.role-card:active {
+  transform: scale(0.98);
+  animation: pulse 0.6s;
+}

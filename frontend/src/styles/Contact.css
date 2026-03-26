@@ -1,0 +1,473 @@
+.contact {
+    padding: 100px 80px;
+    background: linear-gradient(135deg, #f0f4ff 0%, #ffffff 50%, #fff5f5 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.contact::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(11, 61, 145, 0.05) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 32px;
+    color: #0b3d91;
+    margin-bottom: 12px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, #0b3d91 0%, #1e5bb8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.section-subtitle {
+    text-align: center;
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 50px;
+    font-weight: 400;
+}
+
+/* Contact Buttons Row */
+.contact-buttons-row {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    margin-bottom: 60px;
+    flex-wrap: wrap;
+}
+
+.contact-btn {
+    flex: 1;
+    min-width: 280px;
+    max-width: 350px;
+    background: white;
+    padding: 30px 25px;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.contact-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.6s ease;
+}
+
+.contact-btn:hover::before {
+    left: 100%;
+}
+
+.contact-btn:hover {
+    transform: translateY(-10px) scale(1.05);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+}
+
+/* WhatsApp Button */
+.whatsapp-btn {
+    background: linear-gradient(135deg, #ffffff 0%, #f0fff4 100%);
+}
+
+.whatsapp-btn:hover {
+    border-color: rgba(37, 211, 102, 0.4);
+    box-shadow: 0 20px 50px rgba(37, 211, 102, 0.3);
+}
+
+.whatsapp-btn:hover .whatsapp-icon {
+    background: linear-gradient(135deg, #25D366, #128C7E);
+    transform: rotate(15deg) scale(1.2);
+}
+
+/* Call Button */
+.call-btn {
+    background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%);
+}
+
+.call-btn:hover {
+    border-color: rgba(11, 61, 145, 0.4);
+    box-shadow: 0 20px 50px rgba(11, 61, 145, 0.3);
+}
+
+.call-btn:hover .call-icon {
+    background: linear-gradient(135deg, #0b3d91, #1e5bb8);
+    transform: rotate(-15deg) scale(1.2);
+}
+
+/* Email Button */
+.email-btn {
+    background: linear-gradient(135deg, #ffffff 0%, #fff5f5 100%);
+}
+
+.email-btn:hover {
+    border-color: rgba(234, 67, 53, 0.4);
+    box-shadow: 0 20px 50px rgba(234, 67, 53, 0.3);
+}
+
+.email-btn:hover .email-icon {
+    background: linear-gradient(135deg, #EA4335, #C5221F);
+    transform: rotate(15deg) scale(1.2);
+}
+
+/* Button Icons */
+.btn-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    flex-shrink: 0;
+}
+
+.whatsapp-icon {
+    background: linear-gradient(135deg, #d4f4dd, #25D366);
+    color: white;
+}
+
+.call-icon {
+    background: linear-gradient(135deg, #e3f2fd, #0b3d91);
+    color: white;
+}
+
+.email-icon {
+    background: linear-gradient(135deg, #fce4ec, #EA4335);
+    color: white;
+}
+
+/* Button Content */
+.btn-content {
+    flex: 1;
+}
+
+.btn-content h3 {
+    font-size: 20px;
+    color: #0b3d91;
+    margin-bottom: 5px;
+    font-weight: 700;
+}
+
+.btn-content p {
+    font-size: 14px;
+    color: #666;
+    font-weight: 600;
+}
+
+/* Bottom Section */
+.contact-bottom-section {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 30px;
+    margin-top: 40px;
+}
+
+/* Map Container */
+.map-container {
+    background: white;
+    border-radius: 24px;
+    padding: 30px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    border: 2px solid transparent;
+    transition: all 0.4s ease;
+}
+
+.map-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+    border-color: rgba(11, 61, 145, 0.1);
+}
+
+.map-container h3 {
+    font-size: 24px;
+    color: #0b3d91;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.map {
+    border-radius: 16px;
+    overflow: hidden;
+    height: 400px;
+}
+
+.map iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+/* Location Card */
+.location-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%);
+    border-radius: 24px;
+    padding: 30px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    border: 2px solid transparent;
+    transition: all 0.4s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.location-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+    border-color: rgba(11, 61, 145, 0.2);
+}
+
+.location-icon {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, #0b3d91, #1e5bb8);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 20px rgba(11, 61, 145, 0.3);
+}
+
+.location-card h3 {
+    font-size: 22px;
+    color: #0b3d91;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.location-card .address {
+    font-size: 15px;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.location-details {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: #666;
+    padding: 10px;
+    background: white;
+    border-radius: 10px;
+}
+
+.detail-icon {
+    font-size: 18px;
+}
+
+/* Office Hours Card */
+.office-hours-card {
+    background: linear-gradient(135deg, #ffffff 0%, #fff5f5 100%);
+    border-radius: 24px;
+    padding: 30px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    border: 2px solid transparent;
+    transition: all 0.4s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.office-hours-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+    border-color: rgba(234, 67, 53, 0.2);
+}
+
+.hours-icon {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, #EA4335, #C5221F);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 20px rgba(234, 67, 53, 0.3);
+}
+
+.office-hours-card h3 {
+    font-size: 22px;
+    color: #0b3d91;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.hours-list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.hour-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 12px;
+    background: white;
+    border-radius: 10px;
+    border-left: 4px solid #0b3d91;
+}
+
+.hour-item.closed {
+    border-left-color: #EA4335;
+    opacity: 0.7;
+}
+
+.hour-item .day {
+    font-size: 13px;
+    color: #0b3d91;
+    font-weight: 700;
+}
+
+.hour-item .time {
+    font-size: 14px;
+    color: #666;
+    font-weight: 600;
+}
+
+/* Availability Badge */
+.availability-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: #d4f4dd;
+    border-radius: 20px;
+    color: #128C7E;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.pulse-dot {
+    width: 10px;
+    height: 10px;
+    background: #25D366;
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 0.7;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .contact {
+        padding: 80px 60px;
+    }
+
+    .contact-bottom-section {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .map-container {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 768px) {
+    .contact {
+        padding: 60px 30px;
+    }
+
+    .section-title {
+        font-size: 36px;
+    }
+
+    .contact-buttons-row {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .contact-btn {
+        max-width: 100%;
+    }
+
+    .contact-bottom-section {
+        grid-template-columns: 1fr;
+    }
+
+    .map-container {
+        grid-column: 1;
+    }
+
+    .map {
+        height: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    .contact {
+        padding: 50px 20px;
+    }
+
+    .section-title {
+        font-size: 28px;
+    }
+
+    .section-subtitle {
+        font-size: 14px;
+    }
+
+    .contact-btn {
+        min-width: 100%;
+        padding: 25px 20px;
+    }
+
+    .btn-icon {
+        width: 60px;
+        height: 60px;
+    }
+
+    .btn-content h3 {
+        font-size: 18px;
+    }
+
+    .btn-content p {
+        font-size: 13px;
+    }
+}
