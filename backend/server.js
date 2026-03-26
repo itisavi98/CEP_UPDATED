@@ -58,5 +58,5 @@ app.use((err, req, res, next) => {
 // Start server
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📱 Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:5173'}`);
+  console.log(`📱 Frontend URL: ${process.env.VITE_API_URL || 'http://localhost:5173'}`);
 });
