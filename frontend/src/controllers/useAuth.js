@@ -1,85 +1,84 @@
 // frontend/src/controllers/useAuth.js
-import { useState } from 'react';
+// Auth via Supabase Auth — no MongoDB/JWT involved.
+
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import authService from '../services/supabaseAuthService';
+import { supabase } from '../config/supabase';
 
-export function useAuth() {
+export const useAuth = () => {
   const [loading, setLoading] = useState(false);
-  const [error, setError]     = useState('');
-  const navigate = useNavigate();
+  const [error, setError]     = useState(null);
+  const [user, setUser]       = useState(null);
+  const navigate              = useNavigate();
 
-  const login = async (email, password) => {
-    setError('');
-    setLoading(true);
-    const trimmedEmail = (email || '').trim().toLowerCase();
+  // ── Restore session on mount & listen for auth changes ──────
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
 
-    // DEV-only demo credentials — never exposed in production builds
-    if (import.meta.env.DEV) {
-      const demoEmail    = import.meta.env.VITE_DEMO_ADMIN_EMAIL    || 'admin@dreamland.com';
-      const demoPassword = import.meta.env.VITE_DEMO_ADMIN_PASSWORD || 'admin123';
-
-      if (
-        (trimmedEmail === demoEmail || trimmedEmail === 'admin') &&
-        password === demoPassword
-      ) {
-        const data = {
-          token: 'dev-demo-admin-token',
-          user: {
-            id: 'demo-admin',
-            email: demoEmail,
-            role: 'admin',
-          },
-        };
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
-        setLoading(false);
-        navigate('/admin');
-        return;
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user ?? null);
       }
-    }
+    );
 
-    try {
-      const data = await authService.login({ email: trimmedEmail, password });
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      navigate('/admin');
-    } catch (err) {
-      setError(err.message || 'Unable to login. Please check your credentials.');
-    } finally {
-      setLoading(false);
-    }
-  };
+    return () => subscription.unsubscribe();
+  }, []);
 
-  const logout = async () => {
-    try {
-      await authService.logout();
-    } catch (err) {
-      console.error('Logout error:', err);
-    }
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    navigate('/');
-  };
-
-  const signUp = async (email, password) => {
-    setError('');
+  // ── Login ────────────────────────────────────────────────────
+  const login = async (email, password) => {
     setLoading(true);
-    try {
-      await authService.signUp({ email, password });
-      alert('Account created successfully. You can now login.');
-    } catch (err) {
-      setError(err.message);
-    } finally {
+    setError(null);
+
+    const { data, error: authError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (authError) {
+      setError(authError.message);
       setLoading(false);
+      return;
     }
+
+    setUser(data.user);
+    setLoading(false);
+    navigate('/dashboard'); // adjust to your admin route
   };
 
-  const isAuthenticated = () => !!localStorage.getItem('token');
+  // ── Create test account (dev only) ───────────────────────────
+  const signUp = async (email, password) => {
+    setLoading(true);
+    setError(null);
 
-  const getUser = () => {
-    const user = localStorage.getItem('user');
-    return user ? JSON.parse(user) : null;
+    const { data, error: authError } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+
+    if (authError) {
+      setError(authError.message);
+      setLoading(false);
+      return;
+    }
+
+    setLoading(false);
+    alert('Account created! Check your email to confirm, or log in if email confirmation is disabled.');
   };
 
-  return { login, logout, signUp, loading, error, isAuthenticated, getUser };
-}
+  // ── Logout ───────────────────────────────────────────────────
+  const logout = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+    navigate('/login');
+  };
+
+  // ── Get access token for backend API calls ───────────────────
+  const getToken = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    return session?.access_token ?? null;
+  };
+
+  return { login, signUp, logout, loading, error, user, getToken };
+};
