@@ -44,7 +44,7 @@ export const useAuth = () => {
 
     setUser(data.user);
     setLoading(false);
-    navigate('/dashboard'); // adjust to your admin route
+    navigate('/admin');
   };
 
   // ── Create test account (dev only) ───────────────────────────

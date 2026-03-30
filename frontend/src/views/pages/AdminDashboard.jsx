@@ -779,9 +779,8 @@ const PAGE_LABELS = {
 // ── Main AdminDashboard ───────────────────────────────────────────────────────
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('ongoing');
-  const { logout, getUser } = useAuth();
+  const { logout, user } = useAuth();
   const navigate = useNavigate();
-  const user = getUser();
 
   return (
     <div className="admin-shell">
