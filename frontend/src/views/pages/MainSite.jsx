@@ -35,6 +35,7 @@ function MainSite() {
       <OngoingProjects />
       <CompletedProjects />
       <Gallery />
+      <Clients />
       <FAQ />
       <Contact />
       <Footer />

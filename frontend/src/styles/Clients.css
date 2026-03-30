@@ -1,3 +1,7 @@
+/* ═══════════════════════════════════════════════════════════════
+   Clients.css — Bento Grid + Marquee Testimonials
+   ═══════════════════════════════════════════════════════════════ */
+
 .bento-clients-section {
   padding: 80px 20px;
   background-color: #f8fafc;
@@ -9,7 +13,7 @@
   margin: 0 auto;
 }
 
-/* Header Styles */
+/* ── Header ──────────────────────────────────────────────────── */
 .bento-header {
   text-align: center;
   margin-bottom: 60px;
@@ -29,12 +33,12 @@
 }
 
 .bento-title {
-  font-size: 2.5rem;
-  font-weight: 800;
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 900;
   color: #0f172a;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.05em;
   margin-bottom: 16px;
-  line-height: 1.2;
+  line-height: 1.1;
 }
 
 .bento-subtitle {
@@ -45,32 +49,32 @@
   line-height: 1.6;
 }
 
-/* Grid Layout */
+/* ── Bento Grid ──────────────────────────────────────────────── */
 .bento-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  grid-auto-rows: 200px;
+  grid-auto-rows: minmax(180px, auto);
   gap: 24px;
 }
 
 .bento-item {
   background: white;
   border: 1px solid #e2e8f0;
-  border-radius: 24px;
-  padding: 32px;
+  border-radius: 32px;
+  padding: 40px;
   position: relative;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   overflow: hidden;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
 }
 
 .bento-item:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-  border-color: #cbd5e1;
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+  border-color: #6366f1;
 }
 
-/* Featured Tile (Large) */
+/* Featured Tile */
 .bento-featured {
   grid-column: span 2;
   grid-row: span 2;
@@ -85,6 +89,7 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
 }
 
 .quote-icon {
@@ -99,7 +104,7 @@
 }
 
 .featured-text {
-  font-size: 1.5rem;
+  font-size: 1.65rem;
   font-weight: 500;
   line-height: 1.4;
   margin: 20px 0 40px 0;
@@ -109,26 +114,26 @@
 .client-branding {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
 }
 
 .featured-logo {
-  width: 56px;
-  height: 56px;
-  border-radius: 16px;
+  width: 64px;
+  height: 64px;
+  border-radius: 20px;
   background: white;
-  padding: 8px;
+  padding: 10px;
   object-fit: contain;
 }
 
 .featured-name {
-  font-weight: 700;
-  font-size: 1.125rem;
+  font-weight: 800;
+  font-size: 1.25rem;
   margin: 0;
 }
 
 .featured-meta {
-  font-size: 0.875rem;
+  font-size: 0.9rem;
   color: #94a3b8;
   margin: 4px 0 0 0;
 }
@@ -145,8 +150,7 @@
 
 /* Secondary Tiles */
 .bento-secondary {
-  grid-column: span 1;
-  grid-row: span 1;
+  grid-column: span 2;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -160,7 +164,7 @@
 }
 
 .secondary-logo {
-  height: 32px;
+  height: 35px;
   max-width: 80px;
   object-fit: contain;
   filter: grayscale(1);
@@ -176,7 +180,7 @@
 .secondary-rating {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   background: #fef3c7;
   padding: 4px 8px;
   border-radius: 8px;
@@ -186,13 +190,15 @@
   font-size: 0.75rem;
   font-weight: 700;
   color: #92400e;
+  margin-left: 2px;
 }
 
 .secondary-testimonial {
-  font-size: 0.875rem;
+  font-size: 0.95rem;
   color: #475569;
-  line-height: 1.5;
+  line-height: 1.6;
   font-style: italic;
+  flex-grow: 1;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
@@ -210,7 +216,7 @@
 
 .secondary-name {
   font-weight: 700;
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   color: #1e293b;
 }
 
@@ -223,50 +229,42 @@
   transform: translateX(4px);
 }
 
-/* Wide Info/Stats Tile */
+/* Wide Stats Tile */
 .bento-wide-info {
-  grid-column: span 2;
+  grid-column: span 4;
   display: flex;
   align-items: center;
   justify-content: space-around;
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  background: linear-gradient(90deg, #6366f1 0%, #4338ca 100%);
+  color: white;
+  padding: 40px;
 }
 
 .info-block {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.info-icon-wrapper {
-  background: #eff6ff;
-  color: #3b82f6;
-  padding: 10px;
-  border-radius: 12px;
+  text-align: center;
 }
 
 .info-number {
   display: block;
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: #0f172a;
+  font-size: 2.5rem;
+  font-weight: 900;
 }
 
 .info-text {
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   font-weight: 700;
-  color: #64748b;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 1px;
+  opacity: 0.8;
 }
 
 .info-divider {
   width: 1px;
-  height: 40px;
-  background: #e2e8f0;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.25);
 }
 
-/* Loading/Empty States */
+/* ── Loader ──────────────────────────────────────────────────── */
 .bento-loader-container {
   padding: 100px 0;
   text-align: center;
@@ -287,10 +285,154 @@
   to { transform: rotate(360deg); }
 }
 
-/* Responsive Design */
+/* ══════════════════════════════════════════════════════════════
+   MARQUEE SECTION
+   ══════════════════════════════════════════════════════════════ */
+
+.marquee-section {
+  margin-top: 64px;
+}
+
+.marquee-label {
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #94a3b8;
+  margin-bottom: 32px;
+}
+
+/* Each scrolling row */
+.marquee-row {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+/* Fade overlays */
+.marquee-fade {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 100px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.marquee-fade-left {
+  left: 0;
+  background: linear-gradient(to right, #f8fafc, transparent);
+}
+
+.marquee-fade-right {
+  right: 0;
+  background: linear-gradient(to left, #f8fafc, transparent);
+}
+
+/* The scrolling track */
+.marquee-track {
+  display: flex;
+  gap: 0;
+  width: max-content;
+  padding: 12px 0;
+  animation: marqueeScroll 30s linear infinite;
+}
+
+.marquee-track-reverse {
+  animation-direction: reverse;
+}
+
+@keyframes marqueeScroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Pause on hover */
+.marquee-row:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* ── Marquee Card ────────────────────────────────────────────── */
+.marquee-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 20px 24px;
+  width: 300px;
+  flex-shrink: 0;
+  margin: 0 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+  cursor: default;
+}
+
+.marquee-card:hover {
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.12);
+  transform: translateY(-2px);
+  border-color: #c7d2fe;
+}
+
+.marquee-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.marquee-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid #e0e7ff;
+}
+
+.marquee-card-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.marquee-card-name {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.marquee-card-year {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.marquee-stars {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.marquee-card-text {
+  font-size: 0.875rem;
+  color: #475569;
+  line-height: 1.55;
+  font-style: italic;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
 @media (max-width: 1024px) {
   .bento-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+  .bento-wide-info {
+    grid-column: span 2;
   }
 }
 
@@ -299,18 +441,28 @@
     grid-template-columns: 1fr;
     grid-auto-rows: auto;
   }
-  .bento-featured, .bento-secondary, .bento-wide-info {
+  .bento-featured,
+  .bento-secondary,
+  .bento-wide-info {
     grid-column: span 1;
+    grid-row: span 1;
   }
   .bento-wide-info {
     flex-direction: column;
-    padding: 40px;
     gap: 32px;
+    padding: 32px 20px;
   }
   .info-divider {
-    display: none;
+    width: 60px;
+    height: 1px;
   }
   .bento-title {
     font-size: 1.875rem;
+  }
+  .marquee-card {
+    width: 260px;
+  }
+  .marquee-fade {
+    width: 60px;
   }
 }
