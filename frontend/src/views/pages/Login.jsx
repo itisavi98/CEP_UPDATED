@@ -28,11 +28,7 @@ const Login = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="form">
-          <div className="field role-display">
-            <div className="role-badge">
-              <span className="role-indicator admin">🔐 Admin Access Only</span>
-            </div>
-          </div>
+          
 
           <div className="field">
             <input
