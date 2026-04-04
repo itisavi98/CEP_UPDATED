@@ -62,10 +62,6 @@ const CompletedProjects = () => {
                         📍 View on Map
                       </button>
                     )}
-                    {/* ✅ Fix: replaced <a href="#"> with a proper button */}
-                    <button className="details-btn" onClick={() => {}}>
-                      View Details
-                    </button>
                   </div>
                 </div>
               </div>

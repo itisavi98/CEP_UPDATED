@@ -111,12 +111,6 @@ const PropertyCard = ({ property, activeType, accentColor, lightColor, index }) 
               Map
             </a>
           )}
-          <button className="prop-card__btn prop-card__btn--primary">
-            View Details
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
-          </button>
         </div>
       </div>
 

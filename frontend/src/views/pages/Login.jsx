@@ -7,7 +7,7 @@ import '../../styles/Login.css';
 const Login = () => {
   const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
-  const { login, signUp, loading, error } = useAuth();
+  const { login, signUp, googleLogin, loading, error } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
@@ -60,6 +60,14 @@ const Login = () => {
 
           <button type="submit" className="btn" disabled={loading}>
             {loading ? 'Logging in...' : 'Login as Admin'}
+          </button>
+
+          <div className="divider">
+            <span>or</span>
+          </div>
+
+          <button onClick={googleLogin} className="google-btn" disabled={loading}>
+            Continue with Google
           </button>
         </form>
       </div>

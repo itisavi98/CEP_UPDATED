@@ -47,6 +47,25 @@ export const useAuth = () => {
     navigate('/admin');
   };
 
+  // ── Google Login ──────────────────────────────────────────────
+  const googleLogin = async () => {
+    setLoading(true);
+    setError(null);
+
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/admin`,
+      },
+    });
+
+    if (error) {
+      setError(error.message);
+      setLoading(false);
+    }
+    // OAuth will redirect, so no further action needed
+  };
+
   // ── Create test account (dev only) ───────────────────────────
   const signUp = async (email, password) => {
     setLoading(true);
@@ -80,5 +99,5 @@ export const useAuth = () => {
     return session?.access_token ?? null;
   };
 
-  return { login, signUp, logout, loading, error, user, getToken };
+  return { login, signUp, logout, googleLogin, loading, error, user, getToken };
 };

@@ -1,5 +1,5 @@
 /* ============================================================
-   PropertyListings.css  —  Clean & Structured · Horizontal Cards
+   PropertyListings.css  —  Clean & Structured · Compact Tall Cards
    Font: DM Sans (display) + Lora (price numerics)
    ============================================================ */
 
@@ -171,7 +171,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
   gap: 12px;
 }
 
@@ -218,19 +218,20 @@
   letter-spacing: 0.02em;
 }
 
-/* ── Cards List ─────────────────────────────────────────────── */
+/* ── Cards Grid ─────────────────────────────────────────────── */
+/* Changed from flex column to a multi-column grid for compact tall cards */
 .cards-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
 }
 
 /* ══════════════════════════════════════════════════════════════
-   PROPERTY CARD
+   PROPERTY CARD  —  Compact & Tall (portrait orientation)
    ══════════════════════════════════════════════════════════════ */
 .prop-card {
-  display: grid;
-  grid-template-columns: 200px 1fr;
+  display: flex;
+  flex-direction: column;          /* stacked: image on top, body below */
   background: var(--col-surface);
   border-radius: var(--radius-lg);
   border: 1px solid var(--col-border);
@@ -239,7 +240,10 @@
   transition: box-shadow var(--transition), transform var(--transition), border-color var(--transition);
   animation: cardIn 0.4s ease both;
   position: relative;
-  min-height: 152px;
+  width: 100%;                     /* fills grid cell */
+  max-width: 280px;                /* cap width for compactness */
+  min-height: 340px;               /* taller cards */
+  justify-self: center;
 }
 
 @keyframes cardIn {
@@ -249,16 +253,16 @@
 
 .prop-card:hover {
   box-shadow: var(--col-shadow-lg);
-  transform: translateY(-2px);
+  transform: translateY(-3px);
   border-color: var(--col-border-hover);
 }
 
-/* Accent left bar */
+/* Accent top bar (replaces left bar since card is now portrait) */
 .prop-card::before {
   content: '';
   position: absolute;
-  left: 0; top: 0; bottom: 0;
-  width: 3px;
+  top: 0; left: 0; right: 0;
+  height: 3px;
   background: var(--accent);
   opacity: 0;
   transition: opacity var(--transition);
@@ -272,6 +276,8 @@
   position: relative;
   overflow: hidden;
   background: var(--light);
+  height: 160px;                   /* fixed image height */
+  flex-shrink: 0;
 }
 
 .prop-card__image-wrap img {
@@ -288,13 +294,13 @@
 
 .prop-card__badge {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 9px;
+  left: 9px;
   padding: 3px 9px;
   background: rgba(255,255,255,0.96);
   backdrop-filter: blur(6px);
   border-radius: 100px;
-  font-size: 0.62rem;
+  font-size: 0.6rem;
   font-weight: 700;
   letter-spacing: 0.07em;
   text-transform: uppercase;
@@ -304,11 +310,12 @@
 
 /* ── Body ───────────────────────────────────────────────────── */
 .prop-card__body {
-  padding: 14px 16px 14px 18px;
+  padding: 12px 13px 13px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   gap: 8px;
+  flex: 1;                         /* take remaining height */
   min-width: 0;
 }
 
@@ -316,20 +323,22 @@
 .prop-card__info {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 4px;
   min-width: 0;
 }
 
 .prop-card__title {
-  font-size: 0.92rem;
+  font-size: 0.86rem;
   font-weight: 700;
   color: var(--col-text-primary);
   margin: 0;
   letter-spacing: -0.02em;
   line-height: 1.3;
-  white-space: nowrap;
+  /* allow two lines for taller cards */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
   transition: color var(--transition);
 }
 
@@ -339,7 +348,7 @@
   display: flex;
   align-items: center;
   gap: 3px;
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   color: var(--col-text-secondary);
   font-weight: 500;
 }
@@ -351,11 +360,12 @@
 }
 
 .prop-card__desc {
-  font-size: 0.74rem;
+  font-size: 0.70rem;
   color: var(--col-text-muted);
   line-height: 1.5;
   margin: 2px 0 0;
   display: -webkit-box;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -364,17 +374,17 @@
 .prop-card__chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 5px;
+  gap: 4px;
 }
 
 .prop-card__chip {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 3px 9px;
+  gap: 3px;
+  padding: 2px 8px;
   background: var(--light);
   border-radius: 5px;
-  font-size: 0.68rem;
+  font-size: 0.63rem;
   font-weight: 600;
   color: var(--accent);
   border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
@@ -385,9 +395,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 10px;
+  padding-top: 9px;
   border-top: 1px solid var(--col-border);
-  gap: 10px;
+  gap: 8px;
+  margin-top: auto;
 }
 
 .prop-card__price-block {
@@ -397,7 +408,7 @@
 }
 
 .prop-card__price-label {
-  font-size: 0.62rem;
+  font-size: 0.58rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -406,7 +417,7 @@
 
 .prop-card__price {
   font-family: var(--font-accent);
-  font-size: 1.08rem;
+  font-size: 1rem;
   font-weight: 700;
   color: var(--col-text-primary);
   letter-spacing: -0.02em;
@@ -415,7 +426,7 @@
 
 .prop-card__actions {
   display: flex;
-  gap: 6px;
+  gap: 5px;
   align-items: center;
   flex-shrink: 0;
 }
@@ -423,11 +434,11 @@
 .prop-card__btn {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 6px 13px;
+  gap: 4px;
+  padding: 5px 10px;
   border-radius: var(--radius-sm);
   font-family: var(--font-display);
-  font-size: 0.73rem;
+  font-size: 0.68rem;
   font-weight: 600;
   cursor: pointer;
   transition: all var(--transition);
@@ -463,7 +474,7 @@
 
 /* ── Skeleton ───────────────────────────────────────────────── */
 .prop-card--skeleton {
-  min-height: 152px;
+  min-height: 340px;
   background: linear-gradient(90deg, #f0f4f8 25%, #e4eaf0 50%, #f0f4f8 75%);
   background-size: 200% 100%;
   animation: shimmer 1.4s ease infinite;
@@ -490,6 +501,7 @@
   background: var(--col-surface);
   border-radius: var(--radius-lg);
   border: 1px solid var(--col-border);
+  grid-column: 1 / -1;            /* span full grid width */
 }
 
 .empty-state p { margin: 0; }
@@ -500,21 +512,26 @@
   .listings-body { padding-left: 16px; padding-right: 16px; }
   .mega-tab-bar__inner { padding: 0 16px; }
   .mega-tab-bar__label { display: none; }
-  .prop-card { grid-template-columns: 160px 1fr; }
+  .cards-list { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
+  .prop-card { max-width: 100%; min-height: 320px; }
   .listings-header__title { font-size: 1.2rem; }
 }
 
 @media (max-width: 620px) {
-  .prop-card {
-    grid-template-columns: 1fr;
-    grid-template-rows: 170px auto;
-  }
-  .prop-card__image-wrap { height: 170px; }
-  .prop-card__title { white-space: normal; }
+  .cards-list { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .prop-card { max-width: 100%; min-height: 300px; }
+  .prop-card__image-wrap { height: 130px; }
+  .prop-card__body { padding: 10px 11px 11px; }
+  .prop-card__title { font-size: 0.80rem; }
   .mega-tab { padding: 6px 11px; font-size: 0.76rem; }
-  .prop-card__footer { flex-wrap: wrap; gap: 8px; }
+  .prop-card__footer { flex-direction: column; align-items: flex-start; gap: 7px; }
   .prop-card__actions { width: 100%; }
   .prop-card__btn { flex: 1; justify-content: center; }
   .listings-header { padding-top: 18px; padding-bottom: 12px; }
   .listings-header__title { font-size: 1.1rem; }
+}
+
+@media (max-width: 380px) {
+  .cards-list { grid-template-columns: 1fr; }
+  .prop-card { max-width: 100%; }
 }
