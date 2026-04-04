@@ -23,7 +23,7 @@ html, body {
 
   /* Unsplash background */
   background-color: #1a1a2e;
-  background-image: url('https://images.unsplash.com/photo-1527489377706-5bf97e608852?w=1600&auto=format&fit=crop&q=80');
+  background-image: url('https://images.unsplash.com/photo-1666489022945-2a8588bee9d7?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -174,7 +174,7 @@ html, body {
 }
 
 .field.email-field {
-  margin-bottom: 32px;
+  margin-bottom: 20px;
 }
 
 .field input,
@@ -422,7 +422,7 @@ html, body {
   .login-box {
     padding: 28px 20px 26px;
   }
-
+  
   .login-header h1 {
     font-size: 22px;
   }

@@ -65,7 +65,7 @@ const Login = () => {
           </button>
 
           <div className="divider">
-            <span>or</span>
+            <span>OR</span>
           </div>
 
           <button type="button" onClick={googleLogin} className="google-btn" disabled={loading}>
