@@ -5,9 +5,10 @@ import { useAuth } from '../../controllers/useAuth';
 import '../../styles/Login.css';
 
 const Login = () => {
-  const [email, setEmail]       = useState('');
-  const [password, setPassword] = useState('');
-  const { login, signUp, googleLogin, loading, error } = useAuth();
+  const [email, setEmail]           = useState('');
+  const [password, setPassword]     = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
+  const { login, googleLogin, loading, error } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
@@ -18,13 +19,13 @@ const Login = () => {
   return (
     <div className="page">
       <div className="login-box">
-        <button onClick={() => navigate('/role-selection')} className="back-button">
+        <button onClick={() => navigate('/home')} className="back-button">
           ← Back
         </button>
 
         <div className="login-header">
-          <h1>Admin Login</h1>
-          <p>Enter your credentials to access the dashboard</p>
+          <h1>Login</h1>
+          <p>Welcome back — sign in to continue</p>
         </div>
 
         <form onSubmit={handleSubmit} className="form">
@@ -35,7 +36,7 @@ const Login = () => {
             </div>
           </div>
 
-          <div className="field">
+          <div className="field email-field">
             <input
               type="email"
               required
@@ -43,7 +44,7 @@ const Login = () => {
               onChange={(e) => setEmail(e.target.value)}
               placeholder=" "
             />
-            <label>Email Address</label>
+            <label>Email</label>
           </div>
 
           <div className="field">
@@ -56,19 +57,21 @@ const Login = () => {
             />
             <label>Password</label>
           </div>
+
           {error && <div className="error-message">{error}</div>}
 
           <button type="submit" className="btn" disabled={loading}>
-            {loading ? 'Logging in...' : 'Login as Admin'}
+            {loading ? 'Logging in...' : 'Log in'}
           </button>
 
           <div className="divider">
             <span>or</span>
           </div>
 
-          <button onClick={googleLogin} className="google-btn" disabled={loading}>
+          <button type="button" onClick={googleLogin} className="google-btn" disabled={loading}>
             Continue with Google
           </button>
+
         </form>
       </div>
     </div>

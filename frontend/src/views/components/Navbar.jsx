@@ -113,7 +113,7 @@ const Navbar = () => {
           {/* Right actions */}
           <div className="nb-actions">
             <a href="#contact"       className="nb-btn nb-btn--outline">Contact</a>
-            <a href="/role-selection" className="nb-btn nb-btn--fill">
+            <a href="/login" className="nb-btn nb-btn--fill">
               <UserIcon /> Login
             </a>
           </div>
@@ -180,7 +180,7 @@ const Navbar = () => {
 
           <div className="nb-drawer__footer">
             <a href="#contact"        className="nb-btn nb-btn--outline nb-btn--full" onClick={close}>Contact Us</a>
-            <a href="/role-selection" className="nb-btn nb-btn--fill   nb-btn--full" onClick={close}><UserIcon /> Login</a>
+            <a href="/login" className="nb-btn nb-btn--fill   nb-btn--full" onClick={close}><UserIcon /> Login</a>
           </div>
         </div>
       </div>

@@ -13,15 +13,17 @@ const faqs = [
   { question: "Do you offer property management services?", answer: "Yes, we provide comprehensive property management including tenant management, maintenance, rent collection, and legal compliance. Contact us for details about our management packages." },
 ];
 
-const ChevronIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path
-      d="m4.5 7.2 3.793 3.793a1 1 0 0 0 1.414 0L13.5 7.2"
-      stroke="#1D293D"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
+const PlusIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+    fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M5 12h14"/><path d="M12 5v14"/>
+  </svg>
+);
+
+const MinusIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+    fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M5 12h14"/>
   </svg>
 );
 
@@ -35,35 +37,35 @@ const FAQ = () => {
       <div className="faq-container">
 
         <div className="faq-header">
-          <p className="faq-label">FAQ's</p>
-          <h2 className="faq-title">Looking for answer?</h2>
+          <h2 className="faq-title">Most asked FAQ's</h2>
           <p className="faq-subtitle">
-            Find answers to common questions about our properties and services. Can't find what you're looking for? Feel free to contact us.
+            We're here to help you and solve doubts. Find answers to the most common questions below.
           </p>
         </div>
 
-        <div className="faq-list">
+        <div className="faq-grid">
           {faqs.map((faq, index) => {
             const isOpen = activeIndex === index;
             return (
-              <div key={index} className="faq-item" onClick={() => toggle(index)}>
+              <div
+                key={index}
+                className={`faq-item${isOpen ? ' open' : ''}`}
+                onClick={() => toggle(index)}
+              >
                 <div className="faq-question">
-                  <h3 className="question-text">{faq.question}</h3>
-                  <span className={`faq-chevron${isOpen ? ' open' : ''}`}>
-                    <ChevronIcon />
-                  </span>
+                  <span className="question-text">{faq.question}</span>
+                  <div className={`faq-icon${isOpen ? ' open' : ''}`}>
+                    {isOpen ? <MinusIcon /> : <PlusIcon />}
+                  </div>
                 </div>
                 <div className={`faq-answer-wrap${isOpen ? ' open' : ''}`}>
-                  <p className="faq-answer-text">{faq.answer}</p>
+                  <div className="faq-answer-inner">
+                    <p className="faq-answer-text">{faq.answer}</p>
+                  </div>
                 </div>
               </div>
             );
           })}
-        </div>
-
-        <div className="faq-footer">
-          <p>Still have questions?</p>
-          <a href="#contact" className="contact-link">Contact Us →</a>
         </div>
 
       </div>

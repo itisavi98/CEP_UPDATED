@@ -63,7 +63,7 @@ export const useAuth = () => {
       setError(error.message);
       setLoading(false);
     }
-    // OAuth will redirect, so no further action needed
+    // OAuth will redirect to /admin
   };
 
   // ── Create test account (dev only) ───────────────────────────
