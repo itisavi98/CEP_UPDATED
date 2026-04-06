@@ -119,9 +119,8 @@ const PropertyCard = ({ property, activeType, accentColor, lightColor, index }) 
 );
 
 /* ─── Category panel ────────────────────────────────────────── */
-const CategoryPanel = ({ categoryKey, config }) => {
+const CategoryPanel = ({ categoryKey, config, activeSubtype, onSubtypeChange }) => {
   const hasSubtypes = config.subtypes.length > 0;
-  const [activeSubtype, setActiveSubtype] = useState(hasSubtypes ? config.subtypes[0].key : null);
   const { properties, loading } = useProperties(categoryKey, activeSubtype);
 
   return (
@@ -135,7 +134,7 @@ const CategoryPanel = ({ categoryKey, config }) => {
               <button
                 key={st.key}
                 className={`subtype-pill ${activeSubtype === st.key ? 'active' : ''}`}
-                onClick={() => setActiveSubtype(st.key)}
+                onClick={() => onSubtypeChange(st.key)}
               >
                 {st.label}
               </button>
@@ -180,11 +179,30 @@ const CategoryPanel = ({ categoryKey, config }) => {
 /* ─── Main component ────────────────────────────────────────── */
 const PropertyListings = () => {
   const [activeCategory, setActiveCategory] = useState('residential');
+  const [activeSubtypes, setActiveSubtypes] = useState({
+    residential: 'sale',
+    commercial: 'sale',
+    plotting: null
+  });
 
   useEffect(() => {
     const sync = () => {
-      const hash = window.location.hash.replace('#', '').split('-')[0];
-      if (CATEGORY_CONFIG[hash]) setActiveCategory(hash);
+      const hash = window.location.hash.replace('#', '');
+      const parts = hash.split('-');
+      const category = parts[0];
+      const subtype = parts[1];
+
+      if (CATEGORY_CONFIG[category]) {
+        setActiveCategory(category);
+        if (subtype && CATEGORY_CONFIG[category].subtypes.some(st => st.key === subtype)) {
+          setActiveSubtypes(prev => ({ ...prev, [category]: subtype }));
+        }
+        // Scroll to the properties section
+        const element = document.getElementById('properties');
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
     };
     sync();
     window.addEventListener('hashchange', sync);
@@ -192,6 +210,7 @@ const PropertyListings = () => {
   }, []);
 
   const config = CATEGORY_CONFIG[activeCategory];
+  const activeSubtype = activeSubtypes[activeCategory];
 
   return (
     <section className="listings-root" id="properties">
@@ -206,7 +225,12 @@ const PropertyListings = () => {
                 key={key}
                 className={`mega-tab ${activeCategory === key ? 'active' : ''}`}
                 style={{ '--accent': cfg.accentColor, '--light': cfg.lightColor }}
-                onClick={() => { setActiveCategory(key); window.location.hash = key; }}
+                onClick={() => { 
+                  setActiveCategory(key); 
+                  const defaultSubtype = cfg.subtypes.length > 0 ? cfg.subtypes[0].key : null;
+                  setActiveSubtypes(prev => ({ ...prev, [key]: defaultSubtype }));
+                  window.location.hash = defaultSubtype ? `${key}-${defaultSubtype}` : key;
+                }}
               >
                 <span className="mega-tab__icon">{cfg.icon}</span>
                 <span className="mega-tab__label">{cfg.label}</span>
@@ -228,7 +252,16 @@ const PropertyListings = () => {
 
       {/* Body */}
       <div className="listings-body">
-        <CategoryPanel key={activeCategory} categoryKey={activeCategory} config={config} />
+        <CategoryPanel 
+          key={activeCategory} 
+          categoryKey={activeCategory} 
+          config={config}
+          activeSubtype={activeSubtype}
+          onSubtypeChange={(subtype) => {
+            setActiveSubtypes(prev => ({ ...prev, [activeCategory]: subtype }));
+            window.location.hash = `${activeCategory}-${subtype}`;
+          }}
+        />
       </div>
 
     </section>

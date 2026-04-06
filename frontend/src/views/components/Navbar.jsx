@@ -1,5 +1,6 @@
 // frontend/src/views/components/Navbar.jsx
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import '../../styles/Navbar.css';
 
 const ChevronDown = () => (
@@ -48,21 +49,37 @@ const NavDropdown = ({ label, items }) => {
   const ref = useRef(null);
 
   useEffect(() => {
-    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    const handler = (e) => { 
+      if (ref.current && !ref.current.contains(e.target)) {
+        setOpen(false); 
+      }
+    };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
   return (
-    <li className="nb-item nb-item--dropdown" ref={ref}
+    <li 
+      className="nb-item nb-item--dropdown" 
+      ref={ref}
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
+      role="menuitem"
     >
-      <button className={`nb-link nb-link--toggle ${open ? 'nb-link--active' : ''}`} onClick={() => setOpen(!open)}>
+      <button 
+        className={`nb-link nb-link--toggle ${open ? 'nb-link--active' : ''}`} 
+        onClick={() => setOpen(!open)}
+        aria-expanded={open}
+        aria-haspopup="true"
+      >
         {label}
         <span className={`nb-chevron ${open ? 'nb-chevron--open' : ''}`}><ChevronDown /></span>
       </button>
-      <div className={`nb-dropdown-wrap ${open ? 'nb-dropdown-wrap--open' : ''}`}>
+      <div 
+        className={`nb-dropdown-wrap ${open ? 'nb-dropdown-wrap--open' : ''}`}
+        role="menu"
+        aria-hidden={!open}
+      >
         <DropdownMenu items={items} />
       </div>
     </li>
@@ -97,8 +114,6 @@ const Navbar = () => {
           {/* Logo */}
           <a href="#home" className="nb-logo">
             <span className="nb-logo__name">DreamLand</span>
-            <span className="nb-logo__dot" />
-            <span className="nb-logo__tag">Real Estate</span>
           </a>
 
           {/* Desktop links */}
@@ -113,9 +128,9 @@ const Navbar = () => {
           {/* Right actions */}
           <div className="nb-actions">
             <a href="#contact"       className="nb-btn nb-btn--outline">Contact</a>
-            <a href="/login" className="nb-btn nb-btn--fill">
+            <Link to="/login" className="nb-btn nb-btn--fill">
               <UserIcon /> Login
-            </a>
+            </Link>
           </div>
 
           {/* Hamburger */}
@@ -180,7 +195,7 @@ const Navbar = () => {
 
           <div className="nb-drawer__footer">
             <a href="#contact"        className="nb-btn nb-btn--outline nb-btn--full" onClick={close}>Contact Us</a>
-            <a href="/login" className="nb-btn nb-btn--fill   nb-btn--full" onClick={close}><UserIcon /> Login</a>
+            <Link to="/login" className="nb-btn nb-btn--fill   nb-btn--full" onClick={close}><UserIcon /> Login</Link>
           </div>
         </div>
       </div>

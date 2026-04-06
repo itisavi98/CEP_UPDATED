@@ -163,7 +163,7 @@ const SideRow = ({ project, isActive, onClick }) => {
 
 // ── Skeleton ──────────────────────────────────────────────────────────────────
 const HeroSkeleton = () => (
-  <section className="ongoing-projects" id="ongoing">
+  <section className="ongoing-projects">
     <div className="op-inner">
       <div className="op-header">
         <div className="op-header-eyebrow" />
@@ -187,30 +187,38 @@ const OngoingProjects = () => {
   const { projects, loading, error, refetch } = useOngoingProjects();
   const [activeIndex, setActiveIndex] = useState(0);
 
-  if (loading) return <HeroSkeleton />;
+  if (loading) return (
+    <div id="ongoing">
+      <HeroSkeleton />
+    </div>
+  );
 
   if (error) {
     return (
-      <section className="ongoing-projects" id="ongoing">
-        <div className="op-inner">
-          <div className="op-error">
-            <p>Unable to load projects.</p>
-            <button onClick={refetch} className="op-retry-btn">Try Again</button>
+      <div id="ongoing">
+        <section className="ongoing-projects">
+          <div className="op-inner">
+            <div className="op-error">
+              <p>Unable to load projects.</p>
+              <button onClick={refetch} className="op-retry-btn">Try Again</button>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
     );
   }
 
   if (projects.length === 0) {
     return (
-      <section className="ongoing-projects" id="ongoing">
-        <div className="op-inner">
-          <div className="op-empty">
-            <p>No ongoing projects available at the moment.</p>
+      <div id="ongoing">
+        <section className="ongoing-projects">
+          <div className="op-inner">
+            <div className="op-empty">
+              <p>No ongoing projects available at the moment.</p>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
     );
   }
 
@@ -218,87 +226,88 @@ const OngoingProjects = () => {
   const sideItems = projects.filter((_, i) => i !== activeIndex);
 
   return (
-    <section className="ongoing-projects" id="ongoing">
-      <div className="op-inner">
+    <div id="ongoing">
+      <section className="ongoing-projects">
+        <div className="op-inner">
 
-        {/* Section Header */}
-        <div className="op-header">
-          <span className="op-header-eyebrow">Our Portfolio</span>
-          <h2 className="op-header-title">
-            Ongoing <span className="op-header-accent">Projects</span>
-          </h2>
-          <p className="op-header-sub">
-            {projects.length} active project{projects.length !== 1 ? 's' : ''} — click any to explore
-          </p>
-        </div>
+          {/* Section Header */}
+          <div className="op-header">
+            <span className="op-header-eyebrow">Our Portfolio</span>
+            <h2 className="op-header-title">
+              Ongoing <span className="op-header-accent">Projects</span>
+            </h2>
+            <p className="op-header-sub">
+              {projects.length} active project{projects.length !== 1 ? 's' : ''} — click any to explore
+            </p>
+          </div>
 
-        {/* Layout */}
-        <div className="op-layout">
+          {/* Layout */}
+          <div className="op-layout">
 
-          {/* Hero */}
-          <HeroCard project={featured} key={featured.id} />
+            {/* Hero */}
+            <HeroCard project={featured} key={featured.id} />
 
-          {/* Sidebar */}
-          <aside className="op-sidebar">
-            <div className="op-sidebar-header">
-              <span className="op-sidebar-label">All Projects</span>
-              <span className="op-sidebar-count">{projects.length}</span>
-            </div>
-
-            <div className="op-sidebar-list">
-              {/* Active project shown at top as summary */}
-              <div
-                className="op-side-row op-side-row--active op-side-row--current"
-                onClick={() => {}}
-                role="presentation"
-              >
-                <div className="op-side-thumb">
-                  <img
-                    src={featured.image}
-                    alt={featured.title}
-                    loading="lazy"
-                    onError={(e) => { e.target.src = 'https://via.placeholder.com/120x90?text=No+Image'; }}
-                  />
-                </div>
-                <div className="op-side-info">
-                  <div className="op-side-name">{featured.title}</div>
-                  <div className="op-side-loc"><LocationIcon />{featured.location}</div>
-                  <StatusBadge status={featured.status} size="xs" />
-                </div>
-                <div className="op-side-viewing">Viewing</div>
+            {/* Sidebar */}
+            <aside className="op-sidebar">
+              <div className="op-sidebar-header">
+                <span className="op-sidebar-label">All Projects</span>
+                <span className="op-sidebar-count">{projects.length}</span>
               </div>
 
-              {sideItems.length > 0 && (
-                <div className="op-side-divider">
-                  <span>Other projects</span>
+              <div className="op-sidebar-list">
+                {/* Active project shown at top as summary */}
+                <div
+                  className="op-side-row op-side-row--active op-side-row--current"
+                  onClick={() => {}}
+                  role="presentation"
+                >
+                  <div className="op-side-thumb">
+                    <img
+                      src={featured.image}
+                      alt={featured.title}
+                      loading="lazy"
+                      onError={(e) => { e.target.src = 'https://via.placeholder.com/120x90?text=No+Image'; }}
+                    />
+                  </div>
+                  <div className="op-side-info">
+                    <div className="op-side-name">{featured.title}</div>
+                    <div className="op-side-loc"><LocationIcon />{featured.location}</div>
+                    <StatusBadge status={featured.status} size="xs" />
+                  </div>
+                  <div className="op-side-viewing">Viewing</div>
                 </div>
-              )}
 
-              {sideItems.map((project) => {
-                const originalIndex = projects.findIndex(p => p.id === project.id);
-                return (
-                  <SideRow
-                    key={project.id}
-                    project={project}
-                    isActive={false}
-                    onClick={() => setActiveIndex(originalIndex)}
-                  />
-                );
-              })}
-            </div>
+                {sideItems.length > 0 && (
+                  <div className="op-side-divider">
+                    <span>Other projects</span>
+                  </div>
+                )}
 
-            {/* CTA at bottom of sidebar */}
-            <div className="op-sidebar-footer">
-              <a href="#contact" className="op-sidebar-cta">
-                Talk to a consultant <ArrowIcon />
-              </a>
-            </div>
-          </aside>
+                {sideItems.map((project) => {
+                  const originalIndex = projects.findIndex(p => p.id === project.id);
+                  return (
+                    <SideRow
+                      key={project.id}
+                      project={project}
+                      isActive={false}
+                      onClick={() => setActiveIndex(originalIndex)}
+                    />
+                  );
+                })}
+              </div>
 
+              {/* CTA at bottom of sidebar */}
+              <div className="op-sidebar-footer">
+                <a href="#contact" className="op-sidebar-cta">
+                  Talk to a consultant <ArrowIcon />
+                </a>
+              </div>
+            </aside>
+
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   );
 };
-
 export default OngoingProjects;

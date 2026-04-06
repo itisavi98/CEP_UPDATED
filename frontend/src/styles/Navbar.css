@@ -150,18 +150,21 @@
 /* ─── Dropdown Wrapper ────────────────────────────────────── */
 .nb-dropdown-wrap {
   position: absolute;
-  top: calc(100% + 10px);
+  top: 100%;
   left: 0;
   pointer-events: none;
   opacity: 0;
-  transform: translateY(-6px);
-  transition: opacity 0.25s var(--nb-ease), transform 0.25s var(--nb-ease);
+  transform: translateY(-8px);
+  transition: opacity 0.25s var(--nb-ease), transform 0.25s var(--nb-ease), visibility 0.25s var(--nb-ease);
+  visibility: hidden;
+  padding-top: 12px; /* Creates visual space without creating dead zone */
 }
 
 .nb-dropdown-wrap--open {
   pointer-events: auto;
   opacity: 1;
   transform: translateY(0);
+  visibility: visible;
 }
 
 /* ─── Dropdown Panel ──────────────────────────────────────── */
