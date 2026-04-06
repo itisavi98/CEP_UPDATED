@@ -19,7 +19,8 @@ html, body {
   justify-content: center;
   align-items: center;
   position: relative;
-  overflow: visible;
+  overflow: hidden;
+  isolation: isolate;
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
 
@@ -57,7 +58,7 @@ html, body {
   isolation: isolate;
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
-  will-change: backdrop-filter;
+  will-change: transform;
   background: rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(48px) saturate(180%);
   -webkit-backdrop-filter: blur(48px) saturate(180%);
