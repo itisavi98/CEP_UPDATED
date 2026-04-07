@@ -113,30 +113,32 @@ const FormField = ({ field, value, onChange }) => {
     try {
       // Create a unique filename
       const fileName = `${Date.now()}-${file.name}`;
-      const filePath = `images/${fileName}`;
       
-      // Upload the file to Supabase Storage
+      // Upload the file to Supabase Storage (images bucket)
       const { data, error } = await supabase.storage
         .from('images')
-        .upload(filePath, file, {
+        .upload(fileName, file, {
           contentType: file.type,
           upsert: false,
         });
 
       if (error) {
+        if (error.message.includes('not found') || error.message.includes('Bucket not found')) {
+          throw new Error('Images bucket not found. Please create a bucket named "images" in Supabase Storage.');
+        }
         throw new Error(`Upload failed: ${error.message}`);
       }
 
       // Get the public URL
       const { data: { publicUrl } } = supabase.storage
         .from('images')
-        .getPublicUrl(filePath);
+        .getPublicUrl(fileName);
 
       // Set the URL as the value
       onChange(publicUrl);
     } catch (error) {
       console.error('File upload failed:', error);
-      console.error('Full error:', JSON.stringify(error, null, 2));
+      console.error('Full error:', error);
       alert('Failed to upload image. Error: ' + (error.message || 'Unknown error'));
     }
   };
