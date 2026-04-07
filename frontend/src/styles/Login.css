@@ -22,7 +22,7 @@ html, body {
   overflow: hidden;
 
   background-color: #1a1a2e;
-  background-image: url('https://images.unsplash.com/photo-1666489022945-2a8588bee9d7?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+  background-image: url('https://images.openai.com/static-rsc-4/xQwBmvcxwke1at1xJo1SARpJ--02V9kxpYzYUs2dvOq1zh2-HOzZU0O9FNEdv-Kk85c16KttZ80lzX5Cf1NEgiwHgFqJKMpTaEJE6rk_AWffZgflg2hxUaleAgRBEVnOL3YNBy0DhDEePBWUDGfMmue2F3PjRFOFyLEwijEgCL2EQOxHIumCdqGvEVeoeAOB?purpose=fullsize');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -52,7 +52,7 @@ html, body {
   width: 88%;
 
   background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(48px) saturate(180%);
+  background: linear-gradient(135deg, rgba(20,25,40,0.95), rgba(40,50,80,0.9));
   -webkit-backdrop-filter: blur(48px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.28);
   box-shadow:
