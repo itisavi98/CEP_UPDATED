@@ -1,8 +1,7 @@
 // frontend/src/views/pages/AdminDashboard.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { storage } from '../../config/firebase';
+import { supabase } from '../../config/supabase';
 import { useAuth }                                  from '../../controllers/useAuth';
 import { useOngoingProjects, useCompletedProjects } from '../../controllers/useProjects';
 import { useProperties }                            from '../../controllers/useProperties';
@@ -114,19 +113,31 @@ const FormField = ({ field, value, onChange }) => {
     try {
       // Create a unique filename
       const fileName = `${Date.now()}-${file.name}`;
-      const storageRef = ref(storage, `images/${fileName}`);
+      const filePath = `images/${fileName}`;
       
-      // Upload the file
-      await uploadBytes(storageRef, file);
-      
-      // Get the download URL
-      const downloadURL = await getDownloadURL(storageRef);
-      
+      // Upload the file to Supabase Storage
+      const { data, error } = await supabase.storage
+        .from('images')
+        .upload(filePath, file, {
+          contentType: file.type,
+          upsert: false,
+        });
+
+      if (error) {
+        throw new Error(`Upload failed: ${error.message}`);
+      }
+
+      // Get the public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('images')
+        .getPublicUrl(filePath);
+
       // Set the URL as the value
-      onChange(downloadURL);
+      onChange(publicUrl);
     } catch (error) {
       console.error('File upload failed:', error);
-      alert('Failed to upload image. Please try again.');
+      console.error('Full error:', JSON.stringify(error, null, 2));
+      alert('Failed to upload image. Error: ' + (error.message || 'Unknown error'));
     }
   };
 
