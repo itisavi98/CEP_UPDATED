@@ -36,7 +36,8 @@ const Toast = ({ toast }) => {
   if (!toast) return null;
   return (
     <div className={`toast toast-${toast.type}`}>
-      {toast.type === 'success' ? '✓' : '✕'} {toast.msg}
+      <span className="toast-icon">{toast.type === 'success' ? '✓' : '✕'}</span>
+      <span>{toast.msg}</span>
     </div>
   );
 };
@@ -177,7 +178,6 @@ const StatCard = ({ label, value, accent }) => (
   <div className="stat-card" style={{ '--accent': accent }}>
     <div className="stat-value">{value}</div>
     <div className="stat-label">{label}</div>
-    <div className="stat-bar" />
   </div>
 );
 
