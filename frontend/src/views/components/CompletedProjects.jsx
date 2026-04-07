@@ -65,13 +65,14 @@ const SkeletonCard = () => (
 );
 
 /* ─── Project Card ──────────────────────────────────────────── */
-const ProjectCard = ({ project }) => (
+const ProjectCard = React.memo(({ project }) => (
   <div className="cp-card">
     <div className="cp-card__image-wrap">
       <img
         src={project.image || 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&q=80'}
         alt={project.title}
         loading="lazy"
+        decoding="async"
         onError={e => { e.target.src = 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&q=80'; }}
       />
       <div className="cp-card__image-overlay" />
@@ -122,64 +123,179 @@ const ProjectCard = ({ project }) => (
       </div>
     </div>
   </div>
-);
+));
+
+/* ─── Infinite Carousel Hook ────────────────────────────────── */
+/**
+ * Strategy: Clone-based infinite loop
+ * Layout: [clone of last N] [real items] [clone of first N]
+ * When track reaches a clone edge, we silently jump to the real counterpart
+ * (transition: none for 1 frame, then re-enable) — no visible flicker.
+ */
+function useInfiniteCarousel({ items, cardsPerView, intervalMs, enabled }) {
+  const trackRef = useRef(null);
+  const isPausedRef = useRef(false);
+  const rafRef = useRef(null);
+  const timerRef = useRef(null);
+  const isTransitioning = useRef(false);
+
+  // Real index (0-based into `items`)
+  const [realIndex, setRealIndex] = useState(0);
+
+  // The offset index into the extended list (starts at cardsPerView = skip clones)
+  const offsetRef = useRef(cardsPerView);
+
+  const cardWidth = useRef(0); // px, measured at runtime
+  const gap = useRef(20);
+
+  // Build extended list: [last N clones] + [items] + [first N clones]
+  const extendedItems = React.useMemo(() => {
+    if (!items.length) return [];
+    const clone = (arr) => arr.map((item, i) => ({ ...item, _cloneKey: i }));
+    return [
+      ...clone(items.slice(-cardsPerView)),
+      ...items,
+      ...clone(items.slice(0, cardsPerView)),
+    ];
+  }, [items, cardsPerView]);
+
+  const totalReal = items.length;
+
+  // Apply transform instantly (no transition) or with transition
+  const applyOffset = useCallback((index, animate) => {
+    const track = trackRef.current;
+    if (!track) return;
+    const unit = cardWidth.current + gap.current;
+    track.style.transition = animate
+      ? 'transform 0.52s cubic-bezier(0.4, 0, 0.2, 1)'
+      : 'none';
+    track.style.transform = `translate3d(${-index * unit}px, 0, 0)`;
+  }, []);
+
+  // Measure card width on mount & resize
+  const measureCard = useCallback(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    const firstCard = track.querySelector('.cp-card');
+    if (!firstCard) return;
+    cardWidth.current = firstCard.getBoundingClientRect().width;
+    const style = window.getComputedStyle(track);
+    gap.current = parseFloat(style.gap) || 20;
+    // Re-apply offset silently
+    applyOffset(offsetRef.current, false);
+  }, [applyOffset]);
+
+  useEffect(() => {
+    // Small delay to ensure DOM rendered
+    const id = setTimeout(measureCard, 50);
+    window.addEventListener('resize', measureCard, { passive: true });
+    return () => {
+      clearTimeout(id);
+      window.removeEventListener('resize', measureCard);
+    };
+  }, [measureCard, extendedItems]);
+
+  // Move to a given extended index with animation
+  const moveTo = useCallback((newOffset, newReal) => {
+    if (isTransitioning.current) return;
+    isTransitioning.current = true;
+    offsetRef.current = newOffset;
+    setRealIndex(((newReal % totalReal) + totalReal) % totalReal);
+    applyOffset(newOffset, true);
+
+    // After transition completes, check if we need to silently jump
+    const track = trackRef.current;
+    const onEnd = () => {
+      track.removeEventListener('transitionend', onEnd);
+      isTransitioning.current = false;
+
+      // Jumped past real items into the trailing clones → jump back
+      if (offsetRef.current >= totalReal + cardsPerView) {
+        offsetRef.current = cardsPerView;
+        applyOffset(offsetRef.current, false);
+      }
+      // Jumped before real items into the leading clones → jump forward
+      if (offsetRef.current < cardsPerView) {
+        offsetRef.current = totalReal + cardsPerView - 1;
+        applyOffset(offsetRef.current, false);
+      }
+    };
+    track.addEventListener('transitionend', onEnd);
+  }, [applyOffset, cardsPerView, totalReal]);
+
+  const next = useCallback(() => {
+    if (!enabled || totalReal <= cardsPerView) return;
+    moveTo(offsetRef.current + 1, offsetRef.current - cardsPerView + 1);
+  }, [enabled, totalReal, cardsPerView, moveTo]);
+
+  const prev = useCallback(() => {
+    if (!enabled || totalReal <= cardsPerView) return;
+    moveTo(offsetRef.current - 1, offsetRef.current - cardsPerView - 1);
+  }, [enabled, totalReal, cardsPerView, moveTo]);
+
+  const goTo = useCallback((realIdx) => {
+    if (!enabled) return;
+    const offset = realIdx + cardsPerView;
+    moveTo(offset, realIdx);
+  }, [enabled, cardsPerView, moveTo]);
+
+  // Auto-advance with requestAnimationFrame-based timer (avoids setInterval drift)
+  useEffect(() => {
+    if (!enabled || totalReal <= cardsPerView) return;
+    let lastTime = null;
+
+    const tick = (ts) => {
+      if (!lastTime) lastTime = ts;
+      const elapsed = ts - lastTime;
+      if (!isPausedRef.current && elapsed >= intervalMs) {
+        lastTime = ts;
+        if (!isTransitioning.current) next();
+      }
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [enabled, totalReal, cardsPerView, intervalMs, next]);
+
+  const pause = useCallback(() => { isPausedRef.current = true; }, []);
+  const resume = useCallback(() => { isPausedRef.current = false; }, []);
+
+  return { trackRef, extendedItems, realIndex, next, prev, goTo, pause, resume };
+}
 
 /* ─── Main Component ────────────────────────────────────────── */
 const CompletedProjects = () => {
   const { projects, loading, error } = useCompletedProjects();
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [direction, setDirection] = useState('next');
-  const [isPaused, setIsPaused] = useState(false);
   const [showAll, setShowAll] = useState(false);
-  const intervalRef = useRef(null);
-  const CARDS_PER_VIEW = useRef(3);
+  const [cardsPerView, setCardsPerView] = useState(3);
   const INTERVAL_MS = 4000;
 
   // Responsive cards per view
   useEffect(() => {
     const update = () => {
-      if (window.innerWidth < 640) CARDS_PER_VIEW.current = 1;
-      else if (window.innerWidth < 1024) CARDS_PER_VIEW.current = 2;
-      else CARDS_PER_VIEW.current = 3;
+      if (window.innerWidth < 640) setCardsPerView(1);
+      else if (window.innerWidth < 1024) setCardsPerView(2);
+      else setCardsPerView(3);
     };
     update();
-    window.addEventListener('resize', update);
+    window.addEventListener('resize', update, { passive: true });
     return () => window.removeEventListener('resize', update);
   }, []);
 
-  const totalSlides = Math.max(0, projects.length - CARDS_PER_VIEW.current + 1);
+  const {
+    trackRef, extendedItems, realIndex,
+    next, prev, goTo, pause, resume
+  } = useInfiniteCarousel({
+    items: projects,
+    cardsPerView,
+    intervalMs: INTERVAL_MS,
+    enabled: !showAll && !loading && projects.length > cardsPerView,
+  });
 
-  const goNext = useCallback(() => {
-    if (isAnimating || projects.length <= CARDS_PER_VIEW.current) return;
-    setDirection('next');
-    setIsAnimating(true);
-    setTimeout(() => {
-      setCurrentIndex(prev => (prev + 1) % totalSlides);
-      setIsAnimating(false);
-    }, 420);
-  }, [isAnimating, projects.length, totalSlides]);
-
-  const goPrev = useCallback(() => {
-    if (isAnimating || projects.length <= CARDS_PER_VIEW.current) return;
-    setDirection('prev');
-    setIsAnimating(true);
-    setTimeout(() => {
-      setCurrentIndex(prev => (prev - 1 + totalSlides) % totalSlides);
-      setIsAnimating(false);
-    }, 420);
-  }, [isAnimating, projects.length, totalSlides]);
-
-  // Auto-slide
-  useEffect(() => {
-    if (isPaused || loading || projects.length <= CARDS_PER_VIEW.current || showAll) return;
-    intervalRef.current = setInterval(goNext, INTERVAL_MS);
-    return () => clearInterval(intervalRef.current);
-  }, [isPaused, loading, projects.length, showAll, goNext]);
-
-  const visibleProjects = showAll
-    ? projects
-    : projects.slice(currentIndex, currentIndex + CARDS_PER_VIEW.current);
+  const totalSlides = Math.max(0, projects.length - cardsPerView + 1);
 
   /* ── Loading ── */
   if (loading) {
@@ -251,21 +367,24 @@ const CompletedProjects = () => {
           </div>
 
           <div className="cp-header__right">
-            {projects.length > CARDS_PER_VIEW.current && !showAll && (
+            {projects.length > cardsPerView && !showAll && (
               <div className="cp-controls">
-                <button className="cp-control-btn" onClick={goPrev} aria-label="Previous">
+                <button className="cp-control-btn" onClick={prev} aria-label="Previous">
                   <IconChevronLeft />
                 </button>
                 <span className="cp-counter">
-                  {currentIndex + 1} / {totalSlides}
+                  {realIndex + 1} / {projects.length}
                 </span>
-                <button className="cp-control-btn" onClick={goNext} aria-label="Next">
+                <button className="cp-control-btn" onClick={next} aria-label="Next">
                   <IconChevronRight />
                 </button>
               </div>
             )}
             {projects.length > 3 && (
-              <button className="cp-see-all-btn" onClick={() => { setShowAll(!showAll); setCurrentIndex(0); }}>
+              <button
+                className="cp-see-all-btn"
+                onClick={() => { setShowAll(s => !s); }}
+              >
                 {showAll ? '← Show Less' : 'See All →'}
               </button>
             )}
@@ -275,11 +394,11 @@ const CompletedProjects = () => {
         {/* Progress dots */}
         {!showAll && totalSlides > 1 && (
           <div className="cp-dots">
-            {Array.from({ length: totalSlides }).map((_, i) => (
+            {projects.map((_, i) => (
               <button
                 key={i}
-                className={`cp-dot ${i === currentIndex ? 'cp-dot--active' : ''}`}
-                onClick={() => { setCurrentIndex(i); }}
+                className={`cp-dot ${i === realIndex ? 'cp-dot--active' : ''}`}
+                onClick={() => goTo(i)}
                 aria-label={`Go to slide ${i + 1}`}
               />
             ))}
@@ -287,24 +406,40 @@ const CompletedProjects = () => {
         )}
 
         {/* Carousel */}
-        <div
-          className={`cp-carousel-wrap ${showAll ? 'cp-carousel-wrap--grid' : ''}`}
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
-        >
-          <div className={`cp-track ${!showAll ? `cp-track--animate cp-track--${direction} ${isAnimating ? 'cp-track--sliding' : ''}` : 'cp-track--grid'}`}>
-            {visibleProjects.map((project, i) => (
-              <ProjectCard key={`${project.id}-${currentIndex}`} project={project} index={i} />
+        {showAll ? (
+          <div className="cp-track cp-track--grid">
+            {projects.map(project => (
+              <ProjectCard key={project.id} project={project} />
             ))}
           </div>
-        </div>
+        ) : (
+          <div
+            className="cp-carousel-wrap"
+            onMouseEnter={pause}
+            onMouseLeave={resume}
+            onTouchStart={pause}
+            onTouchEnd={resume}
+          >
+            <div
+              ref={trackRef}
+              className="cp-track cp-track--infinite"
+            >
+              {extendedItems.map((project, i) => (
+                <ProjectCard
+                  key={`${project.id}-${project._cloneKey ?? 'real'}-${i}`}
+                  project={project}
+                />
+              ))}
+            </div>
+          </div>
+        )}
 
-        {/* Progress bar */}
-        {!showAll && !isPaused && projects.length > CARDS_PER_VIEW.current && (
+        {/* Progress bar — CSS-only, key forces restart */}
+        {!showAll && projects.length > cardsPerView && (
           <div className="cp-progress-bar">
             <div
               className="cp-progress-bar__fill"
-              key={currentIndex}
+              key={realIndex}
               style={{ animationDuration: `${INTERVAL_MS}ms` }}
             />
           </div>

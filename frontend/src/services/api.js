@@ -2,13 +2,18 @@
 // Base Axios instance — all API calls go through this
 import axios from 'axios';
 
-const fallbackProdURL = 'https://cep-updated.vercel.app/api';
+const fallbackProdURL = 'https://cep-updated.vercel.app';
 const isLocalHostURL = url => typeof url === 'string' && url.includes('localhost');
+const stripTrailingAPI = (url) => {
+  if (!url || typeof url !== 'string') return url;
+  return url.replace(/\/api\/?$/, '');
+};
 
+const envApiUrl = stripTrailingAPI(import.meta.env.VITE_API_URL);
 const baseURL = import.meta.env.DEV
-  ? (import.meta.env.VITE_API_URL || 'http://localhost:5000')
-  : (import.meta.env.VITE_API_URL && !isLocalHostURL(import.meta.env.VITE_API_URL)
-      ? import.meta.env.VITE_API_URL
+  ? (envApiUrl || 'http://localhost:5000')
+  : (envApiUrl && !isLocalHostURL(envApiUrl)
+      ? envApiUrl
       : fallbackProdURL);
 
 if (!import.meta.env.DEV && !import.meta.env.VITE_API_URL) {

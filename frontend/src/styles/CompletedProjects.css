@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════
-   COMPLETED PROJECTS — Enhanced UI
+   COMPLETED PROJECTS — Performance-Optimized Carousel
 ═══════════════════════════════════════════════════════ */
 
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap');
@@ -23,6 +23,7 @@
   --cp-radius:      16px;
   --cp-ease:        cubic-bezier(0.4, 0, 0.2, 1);
   --cp-card-width:  320px;
+  --cp-transition:  0.52s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ── Section wrapper ─────────────────────────────────── */
@@ -34,6 +35,8 @@
     radial-gradient(ellipse at 90% 100%, rgba(34, 197, 94, 0.05) 0%, transparent 50%);
   font-family: 'Roboto', sans-serif;
   overflow: hidden;
+  /* Create stacking context so z-index works correctly */
+  isolation: isolate;
 }
 
 /* ── Header ──────────────────────────────────────────── */
@@ -128,7 +131,8 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.22s var(--cp-ease);
+  /* Only transition GPU-friendly properties */
+  transition: background 0.22s var(--cp-ease), color 0.22s var(--cp-ease), transform 0.22s var(--cp-ease);
   flex-shrink: 0;
 }
 
@@ -156,7 +160,7 @@
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.28s var(--cp-ease);
+  transition: transform 0.28s var(--cp-ease), box-shadow 0.28s var(--cp-ease);
   box-shadow: 0 4px 16px rgba(11, 61, 145, 0.25);
   letter-spacing: 0.2px;
   white-space: nowrap;
@@ -183,7 +187,7 @@
   border: none;
   cursor: pointer;
   padding: 0;
-  transition: all 0.3s var(--cp-ease);
+  transition: width 0.3s var(--cp-ease), background 0.3s var(--cp-ease), border-radius 0.3s var(--cp-ease);
 }
 
 .cp-dot--active {
@@ -195,58 +199,38 @@
 /* ── Carousel wrapper ────────────────────────────────── */
 .cp-carousel-wrap {
   position: relative;
+  /* Clip the cloned cards outside the visible area */
   overflow: hidden;
-}
-
-.cp-carousel-wrap--grid {
-  overflow: visible;
+  /* Contain paint to avoid full-page repaint */
+  contain: layout style;
 }
 
 /* ── Track ───────────────────────────────────────────── */
 .cp-track {
   display: flex;
   gap: 20px;
+  /* Let JS handle transform — no default transition */
+  will-change: transform;
+  /* GPU composite layer promotion */
+  transform: translate3d(0, 0, 0);
+  /* Backface optimization */
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Infinite carousel mode — no overflow clip on track itself */
+.cp-track--infinite {
+  /* width is auto (sum of cards) — overflow handled by parent .cp-carousel-wrap */
+  flex-wrap: nowrap;
 }
 
 /* Grid mode (show-all) */
 .cp-track--grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  overflow: visible;
+  will-change: auto; /* no animation needed in grid mode */
+  transform: none;
 }
-
-/* Slide animation — next */
-.cp-track--animate {
-  transition: none;
-}
-
-@keyframes slideInFromRight {
-  from { opacity: 0; transform: translateX(48px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes slideInFromLeft {
-  from { opacity: 0; transform: translateX(-48px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes slideOutToLeft {
-  from { opacity: 1; transform: translateX(0); }
-  to   { opacity: 0; transform: translateX(-48px); }
-}
-
-.cp-track--animate.cp-track--next .cp-card {
-  animation: slideInFromRight 0.42s var(--cp-ease) both;
-}
-
-.cp-track--animate.cp-track--prev .cp-card {
-  animation: slideInFromLeft 0.42s var(--cp-ease) both;
-}
-
-/* Stagger children */
-.cp-track--animate .cp-card:nth-child(1) { animation-delay: 0s; }
-.cp-track--animate .cp-card:nth-child(2) { animation-delay: 0.06s; }
-.cp-track--animate .cp-card:nth-child(3) { animation-delay: 0.12s; }
 
 /* ── Progress bar ────────────────────────────────────── */
 .cp-progress-bar {
@@ -255,19 +239,22 @@
   border-radius: 2px;
   margin-top: 24px;
   overflow: hidden;
+  contain: strict;
 }
 
 @keyframes progressFill {
-  from { width: 0%; }
-  to   { width: 100%; }
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
 }
 
 .cp-progress-bar__fill {
   height: 100%;
   background: linear-gradient(90deg, var(--cp-blue), var(--cp-green));
   border-radius: 2px;
+  transform-origin: left center;
   animation: progressFill linear forwards;
-  width: 0%;
+  /* GPU accelerated via transform, NOT width */
+  will-change: transform;
 }
 
 /* ── Card ────────────────────────────────────────────── */
@@ -275,20 +262,27 @@
   background: var(--cp-white);
   border-radius: var(--cp-radius);
   overflow: hidden;
+  /* Use a lightweight shadow; heavy shadows cause repaint during animation */
   box-shadow: var(--cp-shadow-sm);
   border: 1px solid rgba(11, 61, 145, 0.07);
   display: flex;
   flex-direction: column;
+  /* Fixed width in carousel mode */
   min-width: var(--cp-card-width);
   max-width: var(--cp-card-width);
   flex-shrink: 0;
   position: relative;
+  /* GPU layer per card for hover lift — promotes to own compositor layer */
+  transform: translate3d(0, 0, 0);
+  will-change: transform, box-shadow;
   transition:
     transform 0.35s var(--cp-ease),
     box-shadow 0.35s var(--cp-ease);
+  /* Contain paint so sibling repaints don't cascade */
+  contain: layout style paint;
 }
 
-/* Top accent line */
+/* Top accent line — GPU-friendly scaleX instead of width */
 .cp-card::before {
   content: '';
   position: absolute;
@@ -298,6 +292,7 @@
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.38s var(--cp-ease);
+  will-change: transform;
   z-index: 3;
 }
 
@@ -306,8 +301,15 @@
 }
 
 .cp-card:hover {
-  transform: translateY(-8px);
+  transform: translate3d(0, -8px, 0);
+  /* Heavier shadow only on hover, not during slide */
   box-shadow: var(--cp-shadow-lg);
+}
+
+/* During carousel slide — suppress hover lift so it doesn't fight the track transform */
+.cp-track--infinite:not(:hover) .cp-card:hover {
+  transform: translate3d(0, 0, 0);
+  box-shadow: var(--cp-shadow-sm);
 }
 
 /* Grid mode cards — fluid width */
@@ -315,6 +317,7 @@
   min-width: unset;
   max-width: unset;
   width: 100%;
+  contain: layout style; /* drop paint containment in grid, needed for overflow */
 }
 
 /* ── Card Image ──────────────────────────────────────── */
@@ -330,11 +333,16 @@
   height: 100%;
   object-fit: cover;
   display: block;
+  /* GPU-accelerated zoom */
+  transform: scale(1) translate3d(0, 0, 0);
   transition: transform 0.55s var(--cp-ease);
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .cp-card:hover .cp-card__image-wrap img {
-  transform: scale(1.08);
+  transform: scale(1.08) translate3d(0, 0, 0);
 }
 
 .cp-card__image-overlay {
@@ -357,6 +365,7 @@
   gap: 5px;
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   color: var(--cp-green-dark);
   font-size: 10.5px;
   font-weight: 700;
@@ -448,7 +457,7 @@
   font-weight: 600;
   cursor: pointer;
   text-decoration: none;
-  transition: all 0.24s var(--cp-ease);
+  transition: transform 0.24s var(--cp-ease), box-shadow 0.24s var(--cp-ease), background 0.24s var(--cp-ease), color 0.24s var(--cp-ease);
   flex: 1;
   white-space: nowrap;
   border: none;
@@ -592,4 +601,20 @@
   .cp-card__image-wrap { height: 180px; }
   .cp-card__body { padding: 14px 16px 16px; }
   .cp-card__title { font-size: 14.5px; }
+}
+
+/* ── Reduced motion ──────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .cp-track,
+  .cp-card,
+  .cp-card::before,
+  .cp-card__image-wrap img,
+  .cp-progress-bar__fill,
+  .cp-dot,
+  .cp-btn,
+  .cp-control-btn,
+  .cp-see-all-btn {
+    transition: none !important;
+    animation: none !important;
+  }
 }
