@@ -1,5 +1,5 @@
 // frontend/src/views/pages/AdminDashboard.jsx
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth }                                  from '../../controllers/useAuth';
 import { useOngoingProjects, useCompletedProjects } from '../../controllers/useProjects';
@@ -103,42 +103,74 @@ function useToastConfirm() {
 }
 
 // ── Reusable field renderer ───────────────────────────────────────────────────
-const FormField = ({ field, value, onChange }) => (
-  <div className="form-group">
-    <label>
-      {field.label}
-      {field.required && <span className="required-star">*</span>}
-    </label>
+const FormField = ({ field, value, onChange }) => {
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-    {field.type === 'select' ? (
-      <select value={value || ''} onChange={(e) => onChange(e.target.value)}>
-        {field.options.map(o => (
-          <option key={o.value} value={o.value}>{o.label}</option>
-        ))}
-      </select>
-    ) : field.type === 'textarea' ? (
-      <textarea
-        value={value || ''}
-        onChange={(e) => onChange(e.target.value)}
-        rows={3}
-        placeholder={field.placeholder || ''}
-      />
-    ) : (
-      <input
-        type={field.type || 'text'}
-        value={value || ''}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={field.placeholder || ''}
-      />
-    )}
+    try {
+      // Create a unique filename
+      const fileName = `${Date.now()}-${file.name}`;
+      const storageRef = ref(storage, `images/${fileName}`);
+      
+      // Upload the file
+      await uploadBytes(storageRef, file);
+      
+      // Get the download URL
+      const downloadURL = await getDownloadURL(storageRef);
+      
+      // Set the URL as the value
+      onChange(downloadURL);
+    } catch (error) {
+      console.error('File upload failed:', error);
+      alert('Failed to upload image. Please try again.');
+    }
+  };
 
-    {field.preview && value && (
-      <div className="image-preview">
-        <img src={value} alt="preview" onError={(e) => { e.target.style.display = 'none'; }} />
-      </div>
-    )}
-  </div>
-);
+  return (
+    <div className="form-group">
+      <label>
+        {field.label}
+        {field.required && <span className="required-star">*</span>}
+      </label>
+
+      {field.type === 'select' ? (
+        <select value={value || ''} onChange={(e) => onChange(e.target.value)}>
+          {field.options.map(o => (
+            <option key={o.value} value={o.value}>{o.label}</option>
+          ))}
+        </select>
+      ) : field.type === 'textarea' ? (
+        <textarea
+          value={value || ''}
+          onChange={(e) => onChange(e.target.value)}
+          rows={3}
+          placeholder={field.placeholder || ''}
+        />
+      ) : field.type === 'file' ? (
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          placeholder={field.placeholder || ''}
+        />
+      ) : (
+        <input
+          type={field.type || 'text'}
+          value={value || ''}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={field.placeholder || ''}
+        />
+      )}
+
+      {field.preview && value && (
+        <div className="image-preview">
+          <img src={value} alt="preview" onError={(e) => { e.target.style.display = 'none'; }} />
+        </div>
+      )}
+    </div>
+  );
+};
 
 // ── Stat Card ─────────────────────────────────────────────────────────────────
 const StatCard = ({ label, value, accent }) => (
@@ -204,7 +236,7 @@ const OngoingTab = () => {
         { value: 'Ready to Move',      label: 'Ready to Move'      },
         { value: 'Launching Soon',     label: 'Launching Soon'     },
       ]},
-    { key: 'image',   label: 'Image URL',   preview: true },
+    { key: 'image',   label: 'Choose Image',   type: 'file', preview: true },
     { key: 'map_url', label: 'Google Map URL' },
   ];
 
@@ -321,7 +353,7 @@ const CompletedTab = () => {
     { key: 'title',       label: 'Project Title', required: true },
     { key: 'location',    label: 'Location' },
     { key: 'year',        label: 'Year Completed', placeholder: 'e.g. 2022' },
-    { key: 'image',       label: 'Image URL',      preview: true },
+    { key: 'image',       label: 'Choose Image',      type: 'file', preview: true },
     { key: 'map_url',     label: 'Google Map URL' },
     { key: 'description', label: 'Description',   type: 'textarea' },
   ];
@@ -385,17 +417,23 @@ const CompletedTab = () => {
 
 // ── Properties Tab ────────────────────────────────────────────────────────────
 const TYPE_MAP = {
-  commercial:  ['sale', 'rent'],
+  commercial:  ['sale', 'resale'],
   residential: ['sale', 'resale'],
   plotting:    ['all'],
 };
 const CATEGORIES = Object.keys(TYPE_MAP);
 
-const PropertiesTab = () => {
-  const [filterCategory, setFilterCategory] = useState('commercial');
-  const [filterType,     setFilterType]     = useState('sale');
+const PropertiesTab = ({ initialCategory }) => {
+  const [filterCategory, setFilterCategory] = useState(initialCategory || 'commercial');
+  const [filterType,     setFilterType]     = useState(TYPE_MAP[initialCategory || 'commercial'][0]);
   const { properties, loading, error, createProperty, updateProperty, deleteProperty } =
     useProperties(filterCategory, filterType);
+
+  useEffect(() => {
+    const category = initialCategory || 'commercial';
+    setFilterCategory(category);
+    setFilterType(TYPE_MAP[category][0]);
+  }, [initialCategory]);
   const { toast, confirm, showToast, askConfirm } = useToastConfirm();
   const [modal,    setModal]    = useState(null);
   const [selected, setSelected] = useState(null);
@@ -411,11 +449,6 @@ const PropertiesTab = () => {
   const openEdit = (p) => { setSelected(p); setForm({ ...p }); setModal('edit'); };
   const closeModal = () => { if (!saving) { setModal(null); setSelected(null); } };
   const set = (key) => (val) => setForm((f) => ({ ...f, [key]: val }));
-
-  const handleCategoryFilter = (cat) => {
-    setFilterCategory(cat);
-    setFilterType(TYPE_MAP[cat][0]);
-  };
 
   const handleSave = async () => {
     if (!form.title.trim()) { showToast('Title is required.', 'error'); return; }
@@ -449,7 +482,7 @@ const PropertiesTab = () => {
     { key: 'location',    label: 'Location' },
     { key: 'price',       label: 'Price (₹)',    required: true, placeholder: 'e.g. 45,00,000' },
     { key: 'area',        label: 'Area',         placeholder: 'e.g. 1200 sq.ft' },
-    { key: 'image',       label: 'Image URL',    preview: true },
+    { key: 'image',       label: 'Choose Image',    type: 'file', preview: true },
     { key: 'map_url',     label: 'Google Map URL' },
     { key: 'description', label: 'Description',  type: 'textarea' },
     {
@@ -468,29 +501,23 @@ const PropertiesTab = () => {
       {confirm && <ConfirmModal {...confirm} />}
 
       <div className="tab-top-bar">
-        <div className="filter-chip-group">
-          <span className="filter-group-label">Category</span>
-          {CATEGORIES.map((c) => (
-            <button
-              key={c}
-              className={`filter-chip ${filterCategory === c ? 'active' : ''}`}
-              onClick={() => handleCategoryFilter(c)}
-            >
-              {c.charAt(0).toUpperCase() + c.slice(1)}
-            </button>
-          ))}
-          <span className="filter-divider" />
-          <span className="filter-group-label">Type</span>
-          {TYPE_MAP[filterCategory].map((t) => (
-            <button
-              key={t}
-              className={`filter-chip ${filterType === t ? 'active' : ''}`}
-              onClick={() => setFilterType(t)}
-            >
-              {t.charAt(0).toUpperCase() + t.slice(1)}
-            </button>
-          ))}
+        <div className="stats-row">
+          <StatCard label="Total" value={properties.length} accent="#4f46e5" />
         </div>
+        {TYPE_MAP[filterCategory].length > 1 && (
+          <div className="filter-chip-group">
+            <span className="filter-group-label">Type</span>
+            {TYPE_MAP[filterCategory].map((t) => (
+              <button
+                key={t}
+                className={`filter-chip ${filterType === t ? 'active' : ''}`}
+                onClick={() => setFilterType(t)}
+              >
+                {t.charAt(0).toUpperCase() + t.slice(1)}
+              </button>
+            ))}
+          </div>
+        )}
         <button className="add-btn" onClick={openAdd}><Icon name="plus" /> Add Property</button>
       </div>
 
@@ -584,7 +611,7 @@ const ClientsTab = () => {
 
   const fields = [
     { key: 'name',         label: 'Client Name',   required: true },
-    { key: 'logo',         label: 'Logo URL',       preview: true },
+    { key: 'logo',         label: 'Choose Logo',       type: 'file', preview: true },
     { key: 'years_with_us',label: 'Years With Us',  placeholder: 'e.g. 5 years' },
     { key: 'rating',       label: 'Rating',         type: 'number', min: 1, max: 5, placeholder: '1-5 stars' },
     { key: 'testimonial',  label: 'Testimonial',    type: 'textarea' },
@@ -698,7 +725,7 @@ const GalleryTab = () => {
   };
 
   const fields = [
-    { key: 'src',         label: 'Image URL',   required: true, preview: true },
+    { key: 'src',         label: 'Choose Image',   type: 'file', required: true, preview: true },
     { key: 'title',       label: 'Title' },
     { key: 'alt',         label: 'Alt Text',     placeholder: 'Describe the image' },
     { key: 'category',    label: 'Category',     placeholder: 'e.g. Residential, Commercial' },
@@ -768,7 +795,9 @@ const NAV_GROUPS = [
   {
     label: 'Listings',
     items: [
-      { key: 'properties', label: 'Properties', icon: 'properties' },
+      { key: 'commercial',  label: 'Commercial',  icon: 'properties' },
+      { key: 'residential', label: 'Residential', icon: 'properties' },
+      { key: 'plotting',    label: 'Plotting',    icon: 'properties' },
     ],
   },
   {
@@ -781,11 +810,13 @@ const NAV_GROUPS = [
 ];
 
 const PAGE_LABELS = {
-  ongoing:    'Ongoing Projects',
-  completed:  'Completed Projects',
-  properties: 'Properties',
-  clients:    'Clients',
-  gallery:    'Gallery',
+  ongoing:      'Ongoing Projects',
+  completed:    'Completed Projects',
+  commercial:   'Commercial Properties',
+  residential:  'Residential Properties',
+  plotting:     'Plotting Properties',
+  clients:      'Clients',
+  gallery:      'Gallery',
 };
 
 // ── Main AdminDashboard ───────────────────────────────────────────────────────
@@ -847,11 +878,13 @@ const AdminDashboard = () => {
         </header>
 
         <div className="admin-content">
-          {activeTab === 'ongoing'    && <OngoingTab />}
-          {activeTab === 'completed'  && <CompletedTab />}
-          {activeTab === 'properties' && <PropertiesTab />}
-          {activeTab === 'clients'    && <ClientsTab />}
-          {activeTab === 'gallery'    && <GalleryTab />}
+          {activeTab === 'ongoing'      && <OngoingTab />}
+          {activeTab === 'completed'    && <CompletedTab />}
+          {(activeTab === 'commercial' || activeTab === 'residential' || activeTab === 'plotting') && (
+            <PropertiesTab initialCategory={activeTab} />
+          )}
+          {activeTab === 'clients'      && <ClientsTab />}
+          {activeTab === 'gallery'      && <GalleryTab />}
         </div>
       </main>
 
