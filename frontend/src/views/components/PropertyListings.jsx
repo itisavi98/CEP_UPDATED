@@ -1,5 +1,5 @@
 // frontend/src/views/components/PropertyListings.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useProperties } from '../../controllers/useProperties';
 import '../../styles/PropertyListings.css';
 
@@ -213,10 +213,29 @@ const FilterSidebar = ({
 /* ─── Category panel (content area) ────────────────────────── */
 const CategoryPanel = ({ categoryKey, config, activeSubtype }) => {
   const { properties, loading } = useProperties(categoryKey, activeSubtype);
+  const [sortBy, setSortBy] = useState('default');
 
   const activeSubtypeLabel = activeSubtype
     ? config.subtypes.find(s => s.key === activeSubtype)?.label
     : null;
+
+  // Sort properties based on selected sort option
+  const sortedProperties = useMemo(() => {
+    if (!properties.length) return properties;
+
+    const sorted = [...properties];
+    switch (sortBy) {
+      case 'price-asc':
+        return sorted.sort((a, b) => (a.price || 0) - (b.price || 0));
+      case 'price-desc':
+        return sorted.sort((a, b) => (b.price || 0) - (a.price || 0));
+      case 'newest':
+        return sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      case 'default':
+      default:
+        return sorted; // Already sorted by created_at desc from service
+    }
+  }, [properties, sortBy]);
 
   return (
     <div
@@ -237,13 +256,24 @@ const CategoryPanel = ({ categoryKey, config, activeSubtype }) => {
           )}
         </div>
         <div className="content-toolbar__right">
-          <select className="sort-select" aria-label="Sort properties">
-            <option value="default">Sort: Default</option>
-            <option value="price-asc">Price: Low → High</option>
-            <option value="price-desc">Price: High → Low</option>
-            <option value="newest">Newest First</option>
-          </select>
-        </div>
+        <div className="sort-group">
+              <span className="sort-group__label"><IconFilter /> Sort By</span>
+              {[
+                { value: 'default',    label: 'Default' },
+                { value: 'price-asc',  label: '↑ Price' },
+                { value: 'price-desc', label: '↓ Price' },
+                { value: 'newest',     label: 'Newest' },
+              ].map(opt => (
+                <button
+                  key={opt.value}
+                  className={`sort-btn ${sortBy === opt.value ? 'sort-btn--active' : ''}`}
+                  onClick={() => setSortBy(opt.value)}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
       </div>
 
       {/* Cards grid */}
@@ -252,7 +282,7 @@ const CategoryPanel = ({ categoryKey, config, activeSubtype }) => {
           [1, 2, 3, 4, 5, 6].map(i => (
             <div key={i} className="prop-card prop-card--skeleton" />
           ))
-        ) : properties.length === 0 ? (
+        ) : sortedProperties.length === 0 ? (
           <div className="empty-state">
             <IconSearch />
             <p>
@@ -261,7 +291,7 @@ const CategoryPanel = ({ categoryKey, config, activeSubtype }) => {
             </p>
           </div>
         ) : (
-          properties.map((property, i) => (
+          sortedProperties.map((property, i) => (
             <PropertyCard
               key={property.id}
               property={property}

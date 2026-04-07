@@ -1,8 +1,8 @@
-// frontend/src/views/components/Navbar.jsx
+import '../../styles/Navbar.css';
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import '../../styles/Navbar.css';
 
+// Icons
 const ChevronDown = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
     <polyline points="6 9 12 15 18 9" />
@@ -16,10 +16,20 @@ const UserIcon = () => (
   </svg>
 );
 
+// Data Constants
 const CATEGORIES = [
-  { label: 'Commercial', sub: [{ label: 'For Sale', href: '#commercial-sale' }, { label: 'For Rent', href: '#commercial-rent' }] },
-  { label: 'Residential', sub: [{ label: 'New Sale', href: '#residential-sale' }, { label: 'Resale', href: '#residential-resale' }] },
-  { label: 'Plotting', sub: [{ label: 'View All', href: '#plotting' }] },
+  { 
+    label: 'Commercial', 
+    sub: [{ label: 'For Sale', href: '#commercial-sale' }, { label: 'For Rent', href: '#commercial-rent' }] 
+  },
+  { 
+    label: 'Residential', 
+    sub: [{ label: 'New Sale', href: '#residential-sale' }, { label: 'Resale', href: '#residential-resale' }] 
+  },
+  { 
+    label: 'Plotting', 
+    sub: [{ label: 'View All', href: '#plotting' }] 
+  },
 ];
 
 const PROJECTS = [
@@ -27,175 +37,161 @@ const PROJECTS = [
   { label: 'Completed Projects', href: '#projects' },
 ];
 
-const DropdownMenu = ({ items, isNested }) => (
-  <div className={`nb-dropdown ${isNested ? 'nb-dropdown--nested' : ''}`}>
-    {items.map((item) =>
-      item.sub ? (
-        <div key={item.label} className="nb-dropdown__group">
-          <span className="nb-dropdown__group-label">{item.label}</span>
-          {item.sub.map((s) => (
-            <a key={s.href} href={s.href} className="nb-dropdown__item nb-dropdown__item--sub">{s.label}</a>
-          ))}
-        </div>
-      ) : (
-        <a key={item.href} href={item.href} className="nb-dropdown__item">{item.label}</a>
-      )
-    )}
-  </div>
-);
+const DesktopDropdown = ({ label, items }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const timeoutRef = useRef(null);
 
-const NavDropdown = ({ label, items }) => {
-  const [open, setOpen] = useState(false);
-  const ref = useRef(null);
+  const handleEnter = () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setIsOpen(true);
+  };
 
-  useEffect(() => {
-    const handler = (e) => { 
-      if (ref.current && !ref.current.contains(e.target)) {
-        setOpen(false); 
-      }
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
+  const handleLeave = () => {
+    timeoutRef.current = setTimeout(() => setIsOpen(false), 150);
+  };
 
   return (
     <li 
-      className="nb-item nb-item--dropdown" 
-      ref={ref}
-      onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
-      role="menuitem"
+      className={`nb-menu__item ${isOpen ? 'nb-menu__item--active' : ''}`}
+      onMouseEnter={handleEnter}
+      onMouseLeave={handleLeave}
     >
-      <button 
-        className={`nb-link nb-link--toggle ${open ? 'nb-link--active' : ''}`} 
-        onClick={() => setOpen(!open)}
-        aria-expanded={open}
-        aria-haspopup="true"
-      >
+      <button className="nb-menu__link">
         {label}
-        <span className={`nb-chevron ${open ? 'nb-chevron--open' : ''}`}><ChevronDown /></span>
+        <span className="nb-chevron"><ChevronDown /></span>
       </button>
-      <div 
-        className={`nb-dropdown-wrap ${open ? 'nb-dropdown-wrap--open' : ''}`}
-        role="menu"
-        aria-hidden={!open}
-      >
-        <DropdownMenu items={items} />
-      </div>
+      
+      {isOpen && (
+        <div className="nb-dropdown">
+          <div className="nb-dropdown__inner">
+            {items.map((item) => (
+              <div key={item.label} className="nb-dropdown__group">
+                {item.sub ? (
+                  <>
+                    <span className="nb-dropdown__title">{item.label}</span>
+                    {item.sub.map((s) => (
+                      <a key={s.href} href={s.href} className="nb-dropdown__link">{s.label}</a>
+                    ))}
+                  </>
+                ) : (
+                  <a key={item.href} href={item.href} className="nb-dropdown__link">{item.label}</a>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </li>
   );
 };
 
 const Navbar = () => {
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [mobileExpanded, setMobileExpanded] = useState(null);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [expandedSection, setExpandedSection] = useState(null);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
+    const handleScroll = () => setIsScrolled(window.scrollY > 30);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   useEffect(() => {
-    document.body.style.overflow = mobileOpen ? 'hidden' : '';
-  }, [mobileOpen]);
+    document.body.style.overflow = isDrawerOpen ? 'hidden' : '';
+  }, [isDrawerOpen]);
 
-  const toggleMobile = (key) =>
-    setMobileExpanded((prev) => (prev === key ? null : key));
+  const toggleDrawer = () => setIsDrawerOpen(!isDrawerOpen);
+  const close = () => { setIsDrawerOpen(false); setExpandedSection(null); };
 
-  const close = () => { setMobileOpen(false); setMobileExpanded(null); };
+  const toggleAccordion = (key) => {
+    setExpandedSection(expandedSection === key ? null : key);
+  };
 
   return (
     <>
-      <nav className={`nb ${scrolled ? 'nb--scrolled' : ''}`}>
-        <div className="nb-inner">
 
-          {/* Logo */}
-          <a href="#home" className="nb-logo">
-            <span className="nb-logo__name">DreamLand</span>
+      <nav className={`nb ${isScrolled ? 'nb--scrolled' : ''}`}>
+        <div className="nb__container">
+          <a href="#home" className="nb-logo" onClick={close}>
+            <div className="nb-logo__icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                <polyline points="9 22 9 12 15 12 15 22" />
+              </svg>
+            </div>
+            <span className="nb-logo__text">DREAM<b>LAND</b></span>
           </a>
 
-          {/* Desktop links */}
           <ul className="nb-menu">
-            <li className="nb-item"><a href="#home"  className="nb-link">Home</a></li>
-            <li className="nb-item"><a href="#about" className="nb-link">About</a></li>
-            <NavDropdown label="Categories" items={CATEGORIES} />
-            <NavDropdown label="Projects"   items={PROJECTS}   />
-            <li className="nb-item"><a href="#gallery" className="nb-link">Gallery</a></li>
+            <li className="nb-menu__item"><a href="#home" className="nb-menu__link">Home</a></li>
+            <DesktopDropdown label="Categories" items={CATEGORIES} />
+            <DesktopDropdown label="Projects" items={PROJECTS} />
+            <li className="nb-menu__item"><a href="#about" className="nb-menu__link">About</a></li>
+            <li className="nb-menu__item"><a href="#gallery" className="nb-menu__link">Gallery</a></li>
           </ul>
 
-          {/* Right actions */}
           <div className="nb-actions">
-            <a href="#contact"       className="nb-btn nb-btn--outline">Contact</a>
-            <Link to="/login" className="nb-btn nb-btn--fill">
-              <UserIcon /> Login
+            <a href="#contact" className="nb-btn">Contact</a>  {/* change here */}
+            <Link to="/login" className="nb-login">
+              <UserIcon /> <span>Login</span>
             </Link>
           </div>
 
-          {/* Hamburger */}
-          <button
-            className={`nb-burger ${mobileOpen ? 'nb-burger--open' : ''}`}
-            onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label="Toggle menu"
+          <button 
+            className={`nb-toggle ${isDrawerOpen ? 'nb-toggle--active' : ''}`} 
+            onClick={toggleDrawer}
           >
-            <span /><span /><span />
+            <span />
+            <span />
+            <span />
           </button>
         </div>
       </nav>
 
-      {/* Mobile overlay */}
-      <div className={`nb-overlay ${mobileOpen ? 'nb-overlay--show' : ''}`} onClick={close} />
-
-      {/* Mobile drawer */}
-      <div className={`nb-drawer ${mobileOpen ? 'nb-drawer--open' : ''}`}>
-        <div className="nb-drawer__inner">
-          <ul className="nb-drawer__menu">
-            {[{ label: 'Home', href: '#home' }, { label: 'About', href: '#about' }].map((l) => (
-              <li key={l.label} className="nb-drawer__item">
-                <a href={l.href} className="nb-drawer__link" onClick={close}>{l.label}</a>
-              </li>
-            ))}
-
-            {/* Categories accordion */}
+      <div className={`nb-drawer ${isDrawerOpen ? 'nb-drawer--open' : ''}`}>
+        <div className="nb-drawer__overlay" onClick={close} />
+        <div className="nb-drawer__content">
+          <ul className="nb-drawer__list">
+            <li><a href="#home" className="nb-drawer__link" onClick={close}>Home</a></li>
             <li className="nb-drawer__item">
-              <button className="nb-drawer__link nb-drawer__toggle" onClick={() => toggleMobile('cat')}>
+              <button className="nb-drawer__link" onClick={() => toggleAccordion('cat')}>
                 Categories
-                <span className={`nb-chevron ${mobileExpanded === 'cat' ? 'nb-chevron--open' : ''}`}><ChevronDown /></span>
+                <span className={`nb-chevron ${expandedSection === 'cat' ? 'nb-chevron--open' : ''}`}><ChevronDown /></span>
               </button>
-              <div className={`nb-drawer__sub ${mobileExpanded === 'cat' ? 'nb-drawer__sub--open' : ''}`}>
-                {CATEGORIES.map((cat) => (
-                  <div key={cat.label} className="nb-drawer__subgroup">
-                    <span className="nb-drawer__subgroup-label">{cat.label}</span>
-                    {cat.sub.map((s) => (
-                      <a key={s.href} href={s.href} className="nb-drawer__sublink" onClick={close}>{s.label}</a>
-                    ))}
-                  </div>
-                ))}
+              <div className={`nb-drawer__accordion ${expandedSection === 'cat' ? 'nb-drawer__accordion--open' : ''}`}>
+                <div className="nb-drawer__accordion-inner">
+                  {CATEGORIES.map(cat => (
+                    <div key={cat.label} className="nb-drawer__group">
+                      <span className="nb-drawer__group-label">{cat.label}</span>
+                      {cat.sub.map(s => (
+                        <a key={s.href} href={s.href} className="nb-drawer__sublink" onClick={close}>{s.label}</a>
+                      ))}
+                    </div>
+                  ))}
+                </div>
               </div>
             </li>
-
-            {/* Projects accordion */}
             <li className="nb-drawer__item">
-              <button className="nb-drawer__link nb-drawer__toggle" onClick={() => toggleMobile('proj')}>
+              <button className="nb-drawer__link" onClick={() => toggleAccordion('proj')}>
                 Projects
-                <span className={`nb-chevron ${mobileExpanded === 'proj' ? 'nb-chevron--open' : ''}`}><ChevronDown /></span>
+                <span className={`nb-chevron ${expandedSection === 'proj' ? 'nb-chevron--open' : ''}`}><ChevronDown /></span>
               </button>
-              <div className={`nb-drawer__sub ${mobileExpanded === 'proj' ? 'nb-drawer__sub--open' : ''}`}>
-                {PROJECTS.map((p) => (
-                  <a key={p.href} href={p.href} className="nb-drawer__sublink" onClick={close}>{p.label}</a>
-                ))}
+              <div className={`nb-drawer__accordion ${expandedSection === 'proj' ? 'nb-drawer__accordion--open' : ''}`}>
+                <div className="nb-drawer__accordion-inner">
+                  {PROJECTS.map(p => (
+                    <a key={p.href} href={p.href} className="nb-drawer__sublink" onClick={close}>{p.label}</a>
+                  ))}
+                </div>
               </div>
             </li>
-
-            <li className="nb-drawer__item">
-              <a href="#gallery" className="nb-drawer__link" onClick={close}>Gallery</a>
-            </li>
+            <li><a href="#about" className="nb-drawer__link" onClick={close}>About Us</a></li>
+            <li><a href="#gallery" className="nb-drawer__link" onClick={close}>Gallery</a></li>
           </ul>
-
           <div className="nb-drawer__footer">
-            <a href="#contact"        className="nb-btn nb-btn--outline nb-btn--full" onClick={close}>Contact Us</a>
-            <Link to="/login" className="nb-btn nb-btn--fill   nb-btn--full" onClick={close}><UserIcon /> Login</Link>
+            <Link to="/login" className="nb-login" onClick={close}>
+              <UserIcon /> <span>Login</span>
+            </Link>
+            <a href="#contact" className="nb-btn nb-btn--full" onClick={close}>Contact</a>
           </div>
         </div>
       </div>

@@ -1,9 +1,9 @@
 /* ============================================================
    PropertyListings.css  —  Filter Sidebar + Card Grid Layout
-   Font: DM Sans (display) + Lora (price numerics)
+   Font: Roboto
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Lora:wght@600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
 
 /* ── Variables ──────────────────────────────────────────────── */
 :root {
@@ -20,8 +20,8 @@
   --radius-sm: 6px;
   --radius-md: 8px;
   --radius-lg: 12px;
-  --font-display: 'DM Sans', sans-serif;
-  --font-accent: 'Lora', serif;
+  --font-display: 'Roboto', sans-serif;
+  --font-accent: 'Roboto', sans-serif;
   --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   --sidebar-w: 210px;
 }
@@ -703,4 +703,71 @@
 
 @media (max-width: 380px) {
   .cards-list { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  .sort-group {
+    flex-wrap: wrap;
+    border-radius: 12px;
+    padding: 6px;
+  }
+
+  .sort-group__label {
+    width: 100%;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 2px;
+  }
+
+  .sort-btn {
+    flex: 1;
+    text-align: center;
+  }
+}
+
+.sort-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 100px;
+  padding: 4px 6px;
+}
+
+.sort-group__label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  padding: 0 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sort-btn {
+  background: none;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.sort-btn:hover {
+  background: #fff;
+  color: var(--accent);
+}
+
+.sort-btn--active {
+  background: #fff;
+  color: var(--accent);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  font-weight: 600;
 }

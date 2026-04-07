@@ -4,7 +4,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'Roboto', sans-serif;
 }
 
 html, body {
@@ -103,7 +103,7 @@ html, body {
 }
 
 .login-header h1 {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Roboto', sans-serif;
   font-weight: 600;
   font-size: 26px;
   color: #ffffff;
