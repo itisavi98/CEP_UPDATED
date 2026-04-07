@@ -25,8 +25,21 @@ const PORT = process.env.PORT || 5000;
 // connectDB();
 
 // Middleware
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  process.env.VITE_FRONTEND_URL,
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'https://cep-updated-frontend.vercel.app',
+].filter(Boolean);
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error(`CORS policy: Origin ${origin} is not allowed.`));
+  },
   credentials: true,
 }));
 
