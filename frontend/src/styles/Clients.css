@@ -103,6 +103,11 @@
   fill: #fbbf24;
 }
 
+.star-empty {
+  color: #d1d5db;
+  fill: #d1d5db;
+}
+
 .featured-text {
   font-size: 1.65rem;
   font-weight: 500;

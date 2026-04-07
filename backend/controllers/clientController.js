@@ -19,7 +19,7 @@ export const getAllClients = async (req, res) => {
 // POST /api/clients  — Admin
 export const createClient = async (req, res) => {
   try {
-    const { name, logo, type, testimonial, project, years_with_us } = req.body;
+    const { name, logo, type, testimonial, project, years_with_us, rating } = req.body;
 
     const client = await Client.create({
       name,
@@ -28,6 +28,7 @@ export const createClient = async (req, res) => {
       testimonial: testimonial || null,
       project: project || null,
       years_with_us: years_with_us || null,
+      rating: rating || 5,
     });
 
     res.status(201).json(client);
@@ -43,7 +44,7 @@ export const createClient = async (req, res) => {
 // PUT /api/clients/:id  — Admin
 export const updateClient = async (req, res) => {
   try {
-    const { name, logo, type, testimonial, project, years_with_us } = req.body;
+    const { name, logo, type, testimonial, project, years_with_us, rating } = req.body;
 
     const client = await Client.findByIdAndUpdate(
       req.params.id,
@@ -53,6 +54,7 @@ export const updateClient = async (req, res) => {
         testimonial: testimonial || null,
         project: project || null,
         years_with_us: years_with_us || null,
+        rating: rating || 5,
       },
       { new: true, runValidators: true }
     );

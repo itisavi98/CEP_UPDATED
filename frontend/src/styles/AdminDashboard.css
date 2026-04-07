@@ -542,6 +542,13 @@ input, select, textarea { font-family: var(--font); }
   flex-shrink: 0;
 }
 
+.rating-item {
+  display: flex;
+  align-items: center;
+  gap: 0 !important;
+  font-size: 12.5px;
+}
+
 .meta-desc {
   font-size: 12px;
   color: var(--text-muted);

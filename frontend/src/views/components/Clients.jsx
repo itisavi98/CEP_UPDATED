@@ -1,59 +1,7 @@
 import React from 'react';
 import { Quote, Star, ArrowRight } from 'lucide-react';
 import '../../styles/Clients.css';
-
-// Replace with your actual import: import { useClients } from '../controllers/useClients';
-const useClientsMock = () => {
-  return {
-    loading: false,
-    clients: [
-      {
-        id: 1,
-        name: "The Sterling Family",
-        testimonial: "Our transition to the waterfront property was seamless. The attention to detail and market insight provided by the team was simply world-class. We couldn't be happier with our new home.",
-        logo: "https://api.dicebear.com/7.x/initials/svg?seed=SF",
-        years_with_us: "2024",
-        featured: true
-      },
-      {
-        id: 2,
-        name: "Azure Holdings",
-        testimonial: "Exceptional commercial portfolio management. They secured our flagship office space 10% under budget.",
-        logo: "https://api.dicebear.com/7.x/initials/svg?seed=AH",
-        years_with_us: "3 years"
-      },
-      {
-        id: 3,
-        name: "Marcus & Elena",
-        testimonial: "Sold our penthouse in record time. The digital marketing strategy was breathtaking.",
-        logo: "https://api.dicebear.com/7.x/initials/svg?seed=ME",
-        years_with_us: "2023"
-      },
-      {
-        id: 4,
-        name: "Dr. Julian Vance",
-        testimonial: "Professionalism at its finest. They understood my specific needs for a quiet, suburban retreat.",
-        logo: "https://api.dicebear.com/7.x/initials/svg?seed=JV",
-        years_with_us: "5 years"
-      },
-      {
-        id: 5,
-        name: "The Kapoor Group",
-        testimonial: "A truly five-star experience from search to close. They found us the perfect investment property.",
-        logo: "https://api.dicebear.com/7.x/initials/svg?seed=KG",
-        years_with_us: "2022"
-      },
-      {
-        id: 6,
-        name: "Priya & Rohan",
-        testimonial: "Guided us through every step of buying our first home. Patient, knowledgeable, and genuinely caring.",
-        logo: "https://api.dicebear.com/7.x/initials/svg?seed=PR",
-        years_with_us: "2023"
-      },
-    ]
-  };
-};
-
+import { useClients } from '../../controllers/useClients';
 // ── Marquee Card Component ────────────────────────────────────────────────────
 const MarqueeCard = ({ client }) => (
   <div className="marquee-card">
@@ -70,7 +18,11 @@ const MarqueeCard = ({ client }) => (
       </div>
       <div className="marquee-stars">
         {[...Array(5)].map((_, i) => (
-          <Star key={i} size={11} className="star-filled" />
+          <Star
+            key={i}
+            size={11}
+            className={i < (client.rating || 5) ? "star-filled" : "star-empty"}
+          />
         ))}
       </div>
     </div>
@@ -80,7 +32,7 @@ const MarqueeCard = ({ client }) => (
 
 // ── Main Component ────────────────────────────────────────────────────────────
 const Clients = () => {
-  const { clients, loading } = useClientsMock();
+  const { clients, loading } = useClients();
 
   const featuredClient = clients?.find(c => c.featured) || clients?.[0];
   const regularClients = clients?.filter(c => c.id !== featuredClient?.id).slice(0, 3) || [];
