@@ -1,6 +1,8 @@
 // frontend/src/views/pages/AdminDashboard.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { storage } from '../../config/firebase';
 import { useAuth }                                  from '../../controllers/useAuth';
 import { useOngoingProjects, useCompletedProjects } from '../../controllers/useProjects';
 import { useProperties }                            from '../../controllers/useProperties';
