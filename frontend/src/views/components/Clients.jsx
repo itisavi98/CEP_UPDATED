@@ -8,7 +8,7 @@ const MarqueeCard = ({ client }) => (
     <div className="marquee-card-header">
       <img
         className="marquee-avatar"
-        src={client.logo}
+        src={client.logo || null}
         alt={client.name}
         onError={(e) => { e.target.src = `https://api.dicebear.com/7.x/initials/svg?seed=${client.name}`; }}
       />

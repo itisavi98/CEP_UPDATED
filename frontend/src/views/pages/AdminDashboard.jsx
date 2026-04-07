@@ -727,7 +727,7 @@ const GalleryTab = () => {
           {images.map((img) => (
             <div className="gallery-card" key={img.id}>
               <img
-                src={img.src}
+                src={img.src || null}
                 alt={img.alt}
                 onError={(e) => { e.target.src = 'https://via.placeholder.com/400x300?text=No+Image'; }}
               />
