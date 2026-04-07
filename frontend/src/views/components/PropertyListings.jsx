@@ -3,27 +3,29 @@ import React, { useState, useEffect } from 'react';
 import { useProperties } from '../../controllers/useProperties';
 import '../../styles/PropertyListings.css';
 
-/* ─── Sub-tab configs per category ─────────────────────────── */
+/* ─── Category & subtype config ─────────────────────────────── */
 const CATEGORY_CONFIG = {
   residential: {
     label: 'Residential',
     icon: (
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
       </svg>
     ),
     subtypes: [
-      { key: 'sale', label: 'For Sale' },
+      { key: 'sale',   label: 'For Sale' },
       { key: 'resale', label: 'Resale' },
     ],
     accentColor: '#0ea5e9',
-    lightColor: '#f0f9ff',
+    lightColor:  '#f0f9ff',
   },
   commercial: {
     label: 'Commercial',
     icon: (
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2" y="7" width="20" height="14" rx="2"/>
+        <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
       </svg>
     ),
     subtypes: [
@@ -31,47 +33,83 @@ const CATEGORY_CONFIG = {
       { key: 'rent', label: 'For Rent' },
     ],
     accentColor: '#6366f1',
-    lightColor: '#f5f3ff',
+    lightColor:  '#f5f3ff',
   },
   plotting: {
     label: 'Plotting',
     icon: (
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <polygon points="3 11 22 2 13 21 11 13 3 11"/>
       </svg>
     ),
     subtypes: [],
     accentColor: '#10b981',
-    lightColor: '#f0fdf4',
+    lightColor:  '#f0fdf4',
   },
 };
 
-/* ─── Single property card ──────────────────────────────────── */
+/* ─── Icons ─────────────────────────────────────────────────── */
+const IconPin = () => (
+  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+    <circle cx="12" cy="10" r="3"/>
+  </svg>
+);
+
+const IconArea = () => (
+  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <rect x="3" y="3" width="18" height="18"/>
+    <path d="M3 9h18M9 21V9"/>
+  </svg>
+);
+
+const IconMap = () => (
+  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+    <circle cx="12" cy="10" r="3"/>
+  </svg>
+);
+
+const IconSearch = () => (
+  <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="1.4">
+    <circle cx="11" cy="11" r="8"/>
+    <path d="m21 21-4.35-4.35"/>
+  </svg>
+);
+
+const IconFilter = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="4" y1="6" x2="20" y2="6"/>
+    <line x1="8" y1="12" x2="16" y2="12"/>
+    <line x1="11" y1="18" x2="13" y2="18"/>
+  </svg>
+);
+
+/* ─── Property Card ─────────────────────────────────────────── */
 const PropertyCard = ({ property, activeType, accentColor, lightColor, index }) => (
   <div
     className="prop-card"
-    style={{ '--accent': accentColor, '--light': lightColor, animationDelay: `${index * 0.06}s` }}
+    style={{ '--accent': accentColor, '--light': lightColor, animationDelay: `${index * 0.055}s` }}
   >
-    {/* Left: Image */}
+    {/* Image */}
     <div className="prop-card__image-wrap">
       <img
         src={property.image || 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400&q=80'}
         alt={property.title}
         onError={e => { e.target.src = 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400&q=80'; }}
       />
-      <span className="prop-card__badge">{activeType || 'Available'}</span>
+      {activeType && (
+        <span className="prop-card__badge">{activeType}</span>
+      )}
     </div>
 
-    {/* Right: Content */}
+    {/* Body */}
     <div className="prop-card__body">
-
-      {/* Top: Title + location */}
+      {/* Info */}
       <div className="prop-card__info">
         <h3 className="prop-card__title">{property.title}</h3>
         <div className="prop-card__location">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
-          </svg>
+          <IconPin />
           {property.location}
         </div>
         {property.description && (
@@ -79,19 +117,17 @@ const PropertyCard = ({ property, activeType, accentColor, lightColor, index }) 
         )}
       </div>
 
-      {/* Mid: Chips row */}
+      {/* Chips */}
       {property.area && (
         <div className="prop-card__chips">
           <span className="prop-card__chip">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <rect x="3" y="3" width="18" height="18"/><path d="M3 9h18M9 21V9"/>
-            </svg>
+            <IconArea />
             {property.area}
           </span>
         </div>
       )}
 
-      {/* Bottom: Price + Actions */}
+      {/* Footer */}
       <div className="prop-card__footer">
         <div className="prop-card__price-block">
           <span className="prop-card__price-label">Price</span>
@@ -105,66 +141,131 @@ const PropertyCard = ({ property, activeType, accentColor, lightColor, index }) 
               rel="noopener noreferrer"
               className="prop-card__btn prop-card__btn--ghost"
             >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
-              </svg>
+              <IconMap />
               Map
             </a>
           )}
         </div>
       </div>
-
     </div>
   </div>
 );
 
-/* ─── Category panel ────────────────────────────────────────── */
-const CategoryPanel = ({ categoryKey, config, activeSubtype, onSubtypeChange }) => {
-  const hasSubtypes = config.subtypes.length > 0;
-  const { properties, loading } = useProperties(categoryKey, activeSubtype);
+/* ─── Filter Sidebar ────────────────────────────────────────── */
+const FilterSidebar = ({
+  activeCategory,
+  onCategoryChange,
+  activeSubtype,
+  onSubtypeChange,
+  propertyCounts,
+}) => {
+  const config = CATEGORY_CONFIG[activeCategory];
 
   return (
-    <div className="cat-panel" style={{ '--accent': config.accentColor, '--light': config.lightColor }}>
+    <aside className="filter-sidebar" aria-label="Property filters">
 
-      {/* Subtype pills + count row */}
-      <div className="panel-toolbar">
-        {hasSubtypes && (
-          <div className="subtype-bar">
+      {/* Category nav */}
+      <div className="sidebar-panel" style={{ '--accent': config.accentColor, '--light': config.lightColor }}>
+        <span className="sidebar-label">Category</span>
+        <nav className="sidebar-nav">
+          {Object.entries(CATEGORY_CONFIG).map(([key, cfg]) => (
+            <button
+              key={key}
+              className={`sidebar-nav-item ${activeCategory === key ? 'active' : ''}`}
+              style={{ '--accent': cfg.accentColor, '--light': cfg.lightColor }}
+              onClick={() => onCategoryChange(key)}
+              aria-pressed={activeCategory === key}
+            >
+              <span className="sidebar-nav-item__icon">{cfg.icon}</span>
+              <span className="sidebar-nav-item__label">{cfg.label}</span>
+              {propertyCounts[key] != null && (
+                <span className="sidebar-nav-item__count">{propertyCounts[key]}</span>
+              )}
+            </button>
+          ))}
+        </nav>
+      </div>
+
+      {/* Subtype filter chips — only shown when subtypes exist */}
+      {config.subtypes.length > 0 && (
+        <div className="sidebar-panel" style={{ '--accent': config.accentColor, '--light': config.lightColor }}>
+          <span className="sidebar-label">Listing Type</span>
+          <div className="sidebar-filters">
             {config.subtypes.map(st => (
               <button
                 key={st.key}
-                className={`subtype-pill ${activeSubtype === st.key ? 'active' : ''}`}
+                className={`sidebar-filter-chip ${activeSubtype === st.key ? 'active' : ''}`}
                 onClick={() => onSubtypeChange(st.key)}
+                aria-pressed={activeSubtype === st.key}
               >
+                <span className="sidebar-filter-chip__dot" />
                 {st.label}
               </button>
             ))}
           </div>
-        )}
-        {!loading && properties.length > 0 && (
-          <p className="results-count">
-            {properties.length} {properties.length === 1 ? 'property' : 'properties'}
+        </div>
+      )}
+
+    </aside>
+  );
+};
+
+/* ─── Category panel (content area) ────────────────────────── */
+const CategoryPanel = ({ categoryKey, config, activeSubtype }) => {
+  const { properties, loading } = useProperties(categoryKey, activeSubtype);
+
+  const activeSubtypeLabel = activeSubtype
+    ? config.subtypes.find(s => s.key === activeSubtype)?.label
+    : null;
+
+  return (
+    <div
+      className="listings-content"
+      style={{ '--accent': config.accentColor, '--light': config.lightColor }}
+    >
+      {/* Content toolbar */}
+      <div className="content-toolbar">
+        <div className="content-toolbar__left">
+          <p className="content-toolbar__title">
+            {config.label} Properties
+            {activeSubtypeLabel ? ` · ${activeSubtypeLabel}` : ''}
           </p>
-        )}
+          {!loading && (
+            <p className="content-toolbar__sub">
+              {properties.length} {properties.length === 1 ? 'property' : 'properties'} found
+            </p>
+          )}
+        </div>
+        <div className="content-toolbar__right">
+          <select className="sort-select" aria-label="Sort properties">
+            <option value="default">Sort: Default</option>
+            <option value="price-asc">Price: Low → High</option>
+            <option value="price-desc">Price: High → Low</option>
+            <option value="newest">Newest First</option>
+          </select>
+        </div>
       </div>
 
-      {/* Cards */}
+      {/* Cards grid */}
       <div className="cards-list">
         {loading ? (
-          [1, 2, 3].map(i => <div key={i} className="prop-card prop-card--skeleton" />)
+          [1, 2, 3, 4, 5, 6].map(i => (
+            <div key={i} className="prop-card prop-card--skeleton" />
+          ))
         ) : properties.length === 0 ? (
           <div className="empty-state">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="1.5">
-              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-            </svg>
-            <p>No {config.label.toLowerCase()} properties available{activeSubtype ? ` for ${activeSubtype}` : ''}</p>
+            <IconSearch />
+            <p>
+              No {config.label.toLowerCase()} properties
+              {activeSubtypeLabel ? ` for ${activeSubtypeLabel.toLowerCase()}` : ''} available
+            </p>
           </div>
         ) : (
           properties.map((property, i) => (
             <PropertyCard
               key={property.id}
               property={property}
-              activeType={activeSubtype}
+              activeType={activeSubtypeLabel}
               accentColor={config.accentColor}
               lightColor={config.lightColor}
               index={i}
@@ -181,27 +282,29 @@ const PropertyListings = () => {
   const [activeCategory, setActiveCategory] = useState('residential');
   const [activeSubtypes, setActiveSubtypes] = useState({
     residential: 'sale',
-    commercial: 'sale',
-    plotting: null
+    commercial:  'sale',
+    plotting:    null,
   });
 
+  // Optional: track per-category counts to show in sidebar nav
+  const [propertyCounts, setPropertyCounts] = useState({
+    residential: null,
+    commercial:  null,
+    plotting:    null,
+  });
+
+  // Sync with URL hash
   useEffect(() => {
     const sync = () => {
       const hash = window.location.hash.replace('#', '');
-      const parts = hash.split('-');
-      const category = parts[0];
-      const subtype = parts[1];
+      const [category, subtype] = hash.split('-');
 
       if (CATEGORY_CONFIG[category]) {
         setActiveCategory(category);
         if (subtype && CATEGORY_CONFIG[category].subtypes.some(st => st.key === subtype)) {
           setActiveSubtypes(prev => ({ ...prev, [category]: subtype }));
         }
-        // Scroll to the properties section
-        const element = document.getElementById('properties');
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
-        }
+        document.getElementById('properties')?.scrollIntoView({ behavior: 'smooth' });
       }
     };
     sync();
@@ -209,59 +312,55 @@ const PropertyListings = () => {
     return () => window.removeEventListener('hashchange', sync);
   }, []);
 
-  const config = CATEGORY_CONFIG[activeCategory];
+  const config       = CATEGORY_CONFIG[activeCategory];
   const activeSubtype = activeSubtypes[activeCategory];
+
+  const handleCategoryChange = (key) => {
+    setActiveCategory(key);
+    const cfg = CATEGORY_CONFIG[key];
+    const defaultSubtype = cfg.subtypes.length > 0 ? cfg.subtypes[0].key : null;
+    setActiveSubtypes(prev => ({ ...prev, [key]: defaultSubtype }));
+    window.location.hash = defaultSubtype ? `${key}-${defaultSubtype}` : key;
+  };
+
+  const handleSubtypeChange = (subtype) => {
+    setActiveSubtypes(prev => ({ ...prev, [activeCategory]: subtype }));
+    window.location.hash = `${activeCategory}-${subtype}`;
+  };
 
   return (
     <section className="listings-root" id="properties">
 
-      {/* Tab Bar */}
-      <div className="mega-tab-bar">
-        <div className="mega-tab-bar__inner">
-          <span className="mega-tab-bar__label">Browse by</span>
-          <div className="mega-tab-bar__tabs">
-            {Object.entries(CATEGORY_CONFIG).map(([key, cfg]) => (
-              <button
-                key={key}
-                className={`mega-tab ${activeCategory === key ? 'active' : ''}`}
-                style={{ '--accent': cfg.accentColor, '--light': cfg.lightColor }}
-                onClick={() => { 
-                  setActiveCategory(key); 
-                  const defaultSubtype = cfg.subtypes.length > 0 ? cfg.subtypes[0].key : null;
-                  setActiveSubtypes(prev => ({ ...prev, [key]: defaultSubtype }));
-                  window.location.hash = defaultSubtype ? `${key}-${defaultSubtype}` : key;
-                }}
-              >
-                <span className="mega-tab__icon">{cfg.icon}</span>
-                <span className="mega-tab__label">{cfg.label}</span>
-                {activeCategory === key && <span className="mega-tab__bar" />}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Header */}
+      {/* Page header */}
       <div className="listings-header">
-        <div className="listings-header__pill" style={{ color: config.accentColor, background: config.lightColor }}>
-          {config.icon} {config.label}
+        <div
+          className="listings-header__pill"
+          style={{ color: config.accentColor, background: config.lightColor }}
+        >
+          {config.icon} Properties
         </div>
-        <h2 className="listings-header__title">{config.label} Properties</h2>
-        <p className="listings-header__sub">Handpicked listings across top locations</p>
+        <h2 className="listings-header__title">Browse Our Listings</h2>
+        <p className="listings-header__sub">Handpicked properties across top locations</p>
       </div>
 
-      {/* Body */}
-      <div className="listings-body">
-        <CategoryPanel 
-          key={activeCategory} 
-          categoryKey={activeCategory} 
+      {/* Sidebar + Content */}
+      <div className="listings-layout">
+
+        <FilterSidebar
+          activeCategory={activeCategory}
+          onCategoryChange={handleCategoryChange}
+          activeSubtype={activeSubtype}
+          onSubtypeChange={handleSubtypeChange}
+          propertyCounts={propertyCounts}
+        />
+
+        <CategoryPanel
+          key={`${activeCategory}-${activeSubtype}`}
+          categoryKey={activeCategory}
           config={config}
           activeSubtype={activeSubtype}
-          onSubtypeChange={(subtype) => {
-            setActiveSubtypes(prev => ({ ...prev, [activeCategory]: subtype }));
-            window.location.hash = `${activeCategory}-${subtype}`;
-          }}
         />
+
       </div>
 
     </section>

@@ -372,6 +372,9 @@ input, select, textarea { font-family: var(--font); }
   min-width: 128px;
   position: relative;
   overflow: hidden;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
   box-shadow: var(--shadow-sm);
   transition: box-shadow var(--transition-base), transform var(--transition-base);
 }
@@ -405,6 +408,8 @@ input, select, textarea { font-family: var(--font); }
 }
 
 .stat-value {
+  text-align: center;
+  width: 100%;
   font-size: 30px;
   font-weight: 800;
   color: var(--text-primary);
@@ -415,6 +420,8 @@ input, select, textarea { font-family: var(--font); }
 
 .stat-label {
   font-size: 10.5px;
+  width: 100%;
+  text-align: center;
   color: var(--text-muted);
   font-weight: 600;
   text-transform: uppercase;
