@@ -176,14 +176,32 @@ function useInfiniteCarousel({ items, cardsPerView, intervalMs, enabled }) {
   const measureCard = useCallback(() => {
     const track = trackRef.current;
     if (!track) return;
-    const firstCard = track.querySelector('.cp-card');
-    if (!firstCard) return;
-    cardWidth.current = firstCard.getBoundingClientRect().width;
+
+    // Get the carousel wrapper (parent of track)
+    const wrap = track.parentElement;
+    if (!wrap) return;
+
     const style = window.getComputedStyle(track);
-    gap.current = parseFloat(style.gap) || 20;
+    const gapPx = parseFloat(style.gap) || 20;
+    gap.current = gapPx;
+
+    // Calculate card width so exactly `cardsPerView` cards fill the wrapper
+    const totalGap = gapPx * (cardsPerView - 1);
+    const wrapWidth = wrap.getBoundingClientRect().width;
+    const computed = (wrapWidth - totalGap) / cardsPerView;
+    cardWidth.current = computed;
+
+    // Apply width to every card in the track
+    const cards = track.querySelectorAll('.cp-card');
+    cards.forEach(card => {
+      card.style.width = `${computed}px`;
+      card.style.minWidth = `${computed}px`;
+      card.style.maxWidth = `${computed}px`;
+    });
+
     // Re-apply offset silently
     applyOffset(offsetRef.current, false);
-  }, [applyOffset]);
+  }, [applyOffset, cardsPerView]);
 
   useEffect(() => {
     // Small delay to ensure DOM rendered
@@ -193,7 +211,7 @@ function useInfiniteCarousel({ items, cardsPerView, intervalMs, enabled }) {
       clearTimeout(id);
       window.removeEventListener('resize', measureCard);
     };
-  }, [measureCard, extendedItems]);
+  }, [measureCard, extendedItems, cardsPerView]);
 
   // Move to a given extended index with animation
   const moveTo = useCallback((newOffset, newReal) => {
