@@ -2,8 +2,13 @@
 // Base Axios instance — all API calls go through this
 import axios from 'axios';
 
-const baseURL = import.meta.env.VITE_API_URL ||
-  (import.meta.env.DEV ? 'http://localhost:5000' : 'https://cep-updated.vercel.app/api');
+const baseURL = import.meta.env.DEV
+  ? (import.meta.env.VITE_API_URL || 'http://localhost:5000')
+  : (import.meta.env.VITE_API_URL || 'https://cep-updated.vercel.app/api');
+
+if (!import.meta.env.DEV && !import.meta.env.VITE_API_URL) {
+  console.warn('VITE_API_URL is not defined; falling back to https://cep-updated.vercel.app/api');
+}
 
 const api = axios.create({
   baseURL,
