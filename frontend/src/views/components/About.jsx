@@ -13,6 +13,7 @@ const About = () => {
             residential and commercial spaces designed for modern living.
             We focus on quality construction, prime locations, and timely delivery.
           </p>
+
           <div className="mission-vision">
             <div>
               <h4>Our Mission</h4>
@@ -23,6 +24,7 @@ const About = () => {
               <p>To become a trusted real estate brand known for innovation and excellence.</p>
             </div>
           </div>
+
           <div className="director-message">
             <h4>Director's Message</h4>
             <p>
@@ -30,18 +32,31 @@ const About = () => {
               Our commitment is to build not just homes, but lasting relationships."
             </p>
           </div>
-          <p className="certification">RERA Registered | ISO Certified Construction Company</p>
+
+          <p className="certification">RERA Registered &nbsp;|&nbsp; ISO Certified Construction Company</p>
         </div>
 
         <div className="about-image">
-          <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85" alt="About Company" />
+          <img
+            src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85"
+            alt="About DreamLand Realty"
+          />
         </div>
       </div>
 
       <div className="stats">
-        <div className="stat-box"><h3>500+</h3><p>Happy Families</p></div>
-        <div className="stat-box"><h3>20+</h3><p>Projects Completed</p></div>
-        <div className="stat-box"><h3>15+</h3><p>Years Experience</p></div>
+        <div className="stat-box">
+          <h3>500+</h3>
+          <p>Happy Families</p>
+        </div>
+        <div className="stat-box">
+          <h3>20+</h3>
+          <p>Projects Completed</p>
+        </div>
+        <div className="stat-box">
+          <h3>15+</h3>
+          <p>Years Experience</p>
+        </div>
       </div>
     </section>
   );
